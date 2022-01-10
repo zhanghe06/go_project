@@ -1,0 +1,29 @@
+service:
+  debug: true
+  lang: en_US
+  name: "go_project"
+  ver: "v1"
+  host: "0.0.0.0"
+  port: "8080"
+mysql:
+  username: "root"
+  password: "123456"
+  db_host: "127.0.0.1"
+  db_port: "3306"
+  db_name: "go_project"
+  charset: "utf8"
+  timeout: "10s"
+  timeout_read: "30s"
+  timeout_write: "30s"
+  max_open_conns: 50
+  max_idle_conns: 10
+  conn_max_lifetime: 500
+etcd:
+  endpoints:
+    - 127.0.0.1:2379
+  timeout: 5
+  path_crt: ""
+  path_key: ""
+  path_ca: ""
+log:
+  file_path: "/tmp/app.log"
