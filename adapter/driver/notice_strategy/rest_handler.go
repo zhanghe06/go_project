@@ -1,0 +1,196 @@
+package noticeStrategy
+
+import (
+	"encoding/json"
+	"github.com/gin-gonic/gin"
+	"go_project/adapter/driver"
+	"go_project/domain/entity"
+	"go_project/domain/vo"
+	"go_project/infra/errors"
+	"go_project/infra/logs"
+	"go_project/infra/requests"
+	"go_project/infra/responses"
+	"net/http"
+	"sync"
+)
+
+type restHandler struct {
+	noticeStrategyEntity entity.NoticeStrategyEntityInterface
+	log logs.Logger
+}
+
+var (
+	restOnce sync.Once
+	restHand driver.RESTHandlerInterface
+)
+
+func NewRESTHandler() driver.RESTHandlerInterface {
+	restOnce.Do(func() {
+		restHand = &restHandler{
+			noticeStrategyEntity: entity.NewNoticeStrategyEntity(),
+			log:  logs.NewLogger(),
+		}
+	})
+	return restHand
+}
+
+func (h *restHandler) RegisterAPI(engine *gin.Engine) {
+	engine.GET("/notice_strategy", h.getListHandler)
+	engine.POST("/notice_strategy", h.createHandler)
+	engine.GET("/notice_strategy/:id", h.getInfoHandler)
+	engine.PUT("/notice_strategy/:id", h.updateHandler)
+	engine.DELETE("/notice_strategy/:id", h.deleteHandler)
+}
+
+
+func (h *restHandler) getListHandler(c *gin.Context) {
+	// 异常捕获
+	defer responses.ApiRecover(c)
+
+	// 请求处理
+	var noticeStrategyGetListReq vo.NoticeStrategyGetListReq
+	if err := c.ShouldBindQuery(&noticeStrategyGetListReq); err != nil {
+		apiErr := &errors.ApiError{
+			ErrCode: errors.ErrCodeNoticeStrategy,
+			ErrMsg:  errors.ErrMsgNoticeStrategy,
+		}
+		_ = c.AbortWithError(http.StatusBadRequest, apiErr)
+		return
+	}
+
+	// 参数转换
+	var filter map[string]interface{}
+	noticeStrategyGetListReqBytes, err := json.Marshal(noticeStrategyGetListReq)
+	if err != nil {
+		_ = c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	err = json.Unmarshal(noticeStrategyGetListReqBytes, &filter)
+	if err != nil {
+		_ = c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	// 逻辑处理
+	total, data, err := h.noticeStrategyEntity.GetNoticeStrategyList(filter)
+	if err != nil {
+		_ = c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	// 响应处理
+	c.JSON(http.StatusOK, gin.H{
+		"total": total,
+		"data":  data,
+	})
+}
+
+func (h *restHandler) getInfoHandler(c *gin.Context) {
+	// 异常捕获
+	defer responses.ApiRecover(c)
+
+	// 请求处理
+	var uriReq requests.IDUriReq
+	if err := c.ShouldBindUri(&uriReq); err != nil {
+		_ = c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	// 逻辑处理
+	data, err := h.noticeStrategyEntity.GetNoticeStrategyInfo(uriReq.ID)
+	if err != nil {
+		_ = c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	// 响应处理
+	c.JSON(http.StatusOK, gin.H{
+		"data":  data,
+	})
+}
+
+func (h *restHandler) createHandler(c *gin.Context) {
+	// 异常捕获
+	defer responses.ApiRecover(c)
+
+	// 请求处理
+	var noticeStrategyCreateReq vo.NoticeStrategyCreateReq
+	if err := c.ShouldBindJSON(&noticeStrategyCreateReq); err != nil {
+		_ = c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	// 逻辑处理
+	id, err := h.noticeStrategyEntity.AddNoticeStrategy(&noticeStrategyCreateReq)
+	if err != nil {
+		_ = c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	// 响应处理
+	c.JSON(http.StatusCreated, gin.H{
+		"id":  id,
+	})
+}
+
+
+func (h *restHandler) updateHandler(c *gin.Context) {
+	defer responses.ApiRecover(c)
+
+	// 请求处理
+	var uriReq requests.IDUriReq
+	if err := c.ShouldBindUri(&uriReq); err != nil {
+		_ = c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	var noticeStrategyUpdateReq vo.NoticeStrategyUpdateReq
+	if err := c.ShouldBindJSON(&noticeStrategyUpdateReq); err != nil {
+		_ = c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	// 参数转换
+	var data map[string]interface{}
+	reqBytes, err := json.Marshal(noticeStrategyUpdateReq)
+	if err != nil {
+		_ = c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	err = json.Unmarshal(reqBytes, &data)
+	if err != nil {
+		_ = c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	// 逻辑处理
+	err = h.noticeStrategyEntity.ModNoticeStrategy(uriReq.ID, data)
+	if err != nil {
+		_ = c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+	c.Status(204)
+}
+
+
+func (h *restHandler) deleteHandler(c *gin.Context) {
+	// 异常捕获
+	defer responses.ApiRecover(c)
+
+	// 请求处理
+	var uriReq requests.IDUriReq
+	if err := c.ShouldBindUri(&uriReq); err != nil {
+		_ = c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	// 逻辑处理
+	err := h.noticeStrategyEntity.DelNoticeStrategy(uriReq.ID)
+	if err != nil {
+		_ = c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	// 响应处理
+	c.Status(204)
+}

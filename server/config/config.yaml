@@ -10,7 +10,7 @@ mysql:
   password: "123456"
   db_host: "127.0.0.1"
   db_port: "3306"
-  db_name: "go_project"
+  db_name: "sap_cert_mgt"
   charset: "utf8"
   timeout: "10s"
   timeout_read: "30s"

@@ -11,27 +11,27 @@ import (
 )
 
 var (
-	repoOnce sync.Once
-	repo     repository.UserRepoInterface
+	noticeEventRepoOnce sync.Once
+	noticeEventRepo     repository.NoticeEventRepoInterface
 )
 
-type UserRepository struct {
+type NoticeEventRepository struct {
 	db *gorm.DB
 	// TODO ETCD
 }
 
-var _ repository.UserRepoInterface = &UserRepository{}
+var _ repository.NoticeEventRepoInterface = &NoticeEventRepository{}
 
-func NewUserRepo() repository.UserRepoInterface {
-	repoOnce.Do(func() {
-		repo = &UserRepository{
+func NewNoticeEventRepo() repository.NoticeEventRepoInterface {
+	noticeEventRepoOnce.Do(func() {
+		noticeEventRepo = &NoticeEventRepository{
 			db: db.NewDB(),
 		}
 	})
-	return repo
+	return noticeEventRepo
 }
 
-func (repo *UserRepository) Create(data *model.User) (id int, err error) {
+func (repo *NoticeEventRepository) Create(data *model.NoticeEvent) (id int, err error) {
 	// 创建时间
 	currentTime := time.Now()
 	data.CreatedAt = currentTime
@@ -45,7 +45,7 @@ func (repo *UserRepository) Create(data *model.User) (id int, err error) {
 	return
 }
 
-func (repo *UserRepository) Update(id int, data map[string]interface{}) (err error) {
+func (repo *NoticeEventRepository) Update(id int, data map[string]interface{}) (err error) {
 	// 条件处理
 	condition := make(map[string]interface{})
 	condition["id"] = id
@@ -55,11 +55,11 @@ func (repo *UserRepository) Update(id int, data map[string]interface{}) (err err
 	currentTime := time.Now()
 	data["updated_at"] = currentTime
 
-	err = repo.db.Model(&model.User{}).Where(condition).Updates(data).Error
+	err = repo.db.Model(&model.NoticeEvent{}).Where(condition).Updates(data).Error
 	return
 }
 
-func (repo *UserRepository) Delete(id int) (err error) {
+func (repo *NoticeEventRepository) Delete(id int) (err error) {
 	// 条件处理
 	condition := make(map[string]interface{})
 	condition["id"] = id
@@ -72,11 +72,11 @@ func (repo *UserRepository) Delete(id int) (err error) {
 	currentTime := time.Now()
 	data["deleted_at"] = currentTime
 
-	err = repo.db.Model(&model.User{}).Where(condition).Updates(data).Error
+	err = repo.db.Model(&model.NoticeEvent{}).Where(condition).Updates(data).Error
 	return
 }
 
-func (repo *UserRepository) GetInfo(id int) (data *model.User, err error) {
+func (repo *NoticeEventRepository) GetInfo(id int) (data *model.NoticeEvent, err error) {
 	// 临时打印SQL
 	// err = repo.db.Debug().First(&data, id).Error
 
@@ -89,7 +89,7 @@ func (repo *UserRepository) GetInfo(id int) (data *model.User, err error) {
 	return
 }
 
-func (repo *UserRepository) GetList(filter map[string]interface{}) (total int64, data []*model.User, err error) {
+func (repo *NoticeEventRepository) GetList(filter map[string]interface{}) (total int64, data []*model.NoticeEvent, err error) {
 	// 条件处理
 	limit := 10
 	offset := 0
@@ -106,7 +106,7 @@ func (repo *UserRepository) GetList(filter map[string]interface{}) (total int64,
 	condition["deleted_state"] = enums.NotDeleted
 
 	// 总记录数
-	userObj := repo.db.Model(&model.User{}).Where(condition)
+	userObj := repo.db.Model(&model.NoticeEvent{}).Where(condition)
 	userObj.Count(&total)
 
 	// 分页查询

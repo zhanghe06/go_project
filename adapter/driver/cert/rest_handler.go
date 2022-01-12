@@ -1,4 +1,4 @@
-package user
+package cert
 
 import (
 	"encoding/json"
@@ -15,7 +15,8 @@ import (
 )
 
 type restHandler struct {
-	userEntity entity.UserEntityInterface
+	certEntity entity.CertEntityInterface
+	operationLogEntity entity.OperationLogEntityInterface
 	log logs.Logger
 }
 
@@ -27,7 +28,8 @@ var (
 func NewRESTHandler() driver.RESTHandlerInterface {
 	restOnce.Do(func() {
 		restHand = &restHandler{
-			userEntity: entity.NewUserEntity(),
+			certEntity: entity.NewCertEntity(),
+			operationLogEntity: entity.NewOperationLogEntity(),
 			log:  logs.NewLogger(),
 		}
 	})
@@ -35,11 +37,11 @@ func NewRESTHandler() driver.RESTHandlerInterface {
 }
 
 func (h *restHandler) RegisterAPI(engine *gin.Engine) {
-	engine.GET("/user", h.getListHandler)
-	engine.POST("/user", h.createHandler)
-	engine.GET("/user/:id", h.getInfoHandler)
-	engine.PUT("/user/:id", h.updateHandler)
-	engine.DELETE("/user/:id", h.deleteHandler)
+	engine.GET("/cert", h.getListHandler)
+	engine.POST("/cert", h.createHandler)
+	engine.GET("/cert/:id", h.getInfoHandler)
+	engine.PUT("/cert/:id", h.updateHandler)
+	engine.DELETE("/cert/:id", h.deleteHandler)
 }
 
 
@@ -48,11 +50,11 @@ func (h *restHandler) getListHandler(c *gin.Context) {
 	defer responses.ApiRecover(c)
 
 	// 请求处理
-	var userGetListReq vo.UserGetListReq
-	if err := c.ShouldBindQuery(&userGetListReq); err != nil {
+	var certGetListReq vo.CertGetListReq
+	if err := c.ShouldBindQuery(&certGetListReq); err != nil {
 		apiErr := &errors.ApiError{
-			ErrCode: errors.ErrCodeUser,
-			ErrMsg:  errors.ErrMsgUser,
+			ErrCode: errors.ErrCodeCert,
+			ErrMsg:  errors.ErrMsgCert,
 		}
 		_ = c.AbortWithError(http.StatusBadRequest, apiErr)
 		return
@@ -60,19 +62,19 @@ func (h *restHandler) getListHandler(c *gin.Context) {
 
 	// 参数转换
 	var filter map[string]interface{}
-	userGetListReqBytes, err := json.Marshal(userGetListReq)
+	certGetListReqBytes, err := json.Marshal(certGetListReq)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	err = json.Unmarshal(userGetListReqBytes, &filter)
+	err = json.Unmarshal(certGetListReqBytes, &filter)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	// 逻辑处理
-	total, data, err := h.userEntity.GetUserList(filter)
+	total, data, err := h.certEntity.GetCertList(filter)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -97,7 +99,7 @@ func (h *restHandler) getInfoHandler(c *gin.Context) {
 	}
 
 	// 逻辑处理
-	data, err := h.userEntity.GetUserInfo(uriReq.ID)
+	data, err := h.certEntity.GetCertInfo(uriReq.ID)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -114,14 +116,14 @@ func (h *restHandler) createHandler(c *gin.Context) {
 	defer responses.ApiRecover(c)
 
 	// 请求处理
-	var userCreateReq vo.UserCreateReq
-	if err := c.ShouldBindJSON(&userCreateReq); err != nil {
+	var certCreateReq vo.CertCreateReq
+	if err := c.ShouldBindJSON(&certCreateReq); err != nil {
 		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	// 逻辑处理
-	id, err := h.userEntity.AddUser(&userCreateReq)
+	id, err := h.certEntity.AddCert(&certCreateReq)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -144,15 +146,15 @@ func (h *restHandler) updateHandler(c *gin.Context) {
 		return
 	}
 
-	var userUpdateReq vo.UserUpdateReq
-	if err := c.ShouldBindJSON(&userUpdateReq); err != nil {
+	var certUpdateReq vo.CertUpdateReq
+	if err := c.ShouldBindJSON(&certUpdateReq); err != nil {
 		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	// 参数转换
 	var data map[string]interface{}
-	reqBytes, err := json.Marshal(userUpdateReq)
+	reqBytes, err := json.Marshal(certUpdateReq)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
@@ -164,7 +166,7 @@ func (h *restHandler) updateHandler(c *gin.Context) {
 	}
 
 	// 逻辑处理
-	err = h.userEntity.ModUser(uriReq.ID, data)
+	err = h.certEntity.ModCert(uriReq.ID, data)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -185,7 +187,7 @@ func (h *restHandler) deleteHandler(c *gin.Context) {
 	}
 
 	// 逻辑处理
-	err := h.userEntity.DelUser(uriReq.ID)
+	err := h.certEntity.DelCert(uriReq.ID)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return

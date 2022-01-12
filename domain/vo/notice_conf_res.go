@@ -4,13 +4,13 @@ import (
 	"go_project/domain/enums"
 )
 
-// UserCreateRes .
-type UserCreateRes struct {
+// NoticeConfCreateRes .
+type NoticeConfCreateRes struct {
 	Id int // 用户id
 }
 
-// UserGetInfoRes .
-type UserGetInfoRes struct {
+// NoticeConfGetInfoRes .
+type NoticeConfGetInfoRes struct {
 	Id                int    `json:"id"`                  // 用户id
 	Name              string `json:"name"`                // 名称
 	Gender            int    `json:"gender"`              // 性别
@@ -18,12 +18,12 @@ type UserGetInfoRes struct {
 	GenderDisplayName string `json:"gender_display_name"` // 性别（显示名称）
 }
 
-func (res *UserGetInfoRes) SetGenderDisplayName() {
+func (res *NoticeConfGetInfoRes) SetGenderDisplayName() {
 	res.GenderDisplayName = enums.GenderType(res.Gender).DisplayName()
 }
 
-// UserGetListRes .
-type UserGetListRes struct {
-	Data  []*UserGetInfoRes
+// NoticeConfGetListRes .
+type NoticeConfGetListRes struct {
+	Data  []*NoticeConfGetInfoRes
 	Count int64
 }
