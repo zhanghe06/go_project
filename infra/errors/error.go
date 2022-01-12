@@ -23,6 +23,7 @@ const (
 	// ErrCode 通用异常
 	ErrCode = 100000 + iota
 	ErrCodeInternalServerError
+	ErrCodeUnauthorized
 )
 
 const (
@@ -67,6 +68,7 @@ const (
 	// ErrMsg 通用异常
 	ErrMsg = ""
 	ErrMsgInternalServerError = ""
+	ErrMsgUnauthorized = ""
 )
 
 const (

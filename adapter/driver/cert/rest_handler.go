@@ -137,6 +137,7 @@ func (h *restHandler) createHandler(c *gin.Context) {
 
 
 func (h *restHandler) updateHandler(c *gin.Context) {
+	// 异常捕获
 	defer responses.ApiRecover(c)
 
 	// 请求处理

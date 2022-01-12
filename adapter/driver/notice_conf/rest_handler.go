@@ -7,6 +7,7 @@ import (
 	"go_project/domain/entity"
 	"go_project/domain/vo"
 	"go_project/infra/logs"
+	"go_project/infra/requests"
 	"go_project/infra/responses"
 	"net/http"
 	"sync"
@@ -41,6 +42,12 @@ func (h *restHandler) getEmailHandler(c *gin.Context) {
 	// 异常捕获
 	defer responses.ApiRecover(c)
 
+	// 认证处理
+	err := requests.TokenAuthorization(c)
+	if err != nil {
+		_ = c.AbortWithError(http.StatusUnauthorized, err)
+	}
+
 	// 逻辑处理
 	data, err := h.noticeConfEntity.GetNoticeConfEmail()
 	if err != nil {
@@ -55,6 +62,12 @@ func (h *restHandler) getEmailHandler(c *gin.Context) {
 func (h *restHandler) modEmailHandler(c *gin.Context) {
 	// 异常捕获
 	defer responses.ApiRecover(c)
+
+	// 认证处理
+	err := requests.TokenAuthorization(c)
+	if err != nil {
+		_ = c.AbortWithError(http.StatusUnauthorized, err)
+	}
 
 	// 逻辑处理
 	var noticeConfUpdateReq vo.NoticeConfModEmailReq

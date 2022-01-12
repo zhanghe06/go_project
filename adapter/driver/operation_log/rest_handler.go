@@ -48,6 +48,12 @@ func (h *restHandler) getListHandler(c *gin.Context) {
 	// 异常捕获
 	defer responses.ApiRecover(c)
 
+	// 认证处理
+	err := requests.TokenAuthorization(c)
+	if err != nil {
+		_ = c.AbortWithError(http.StatusUnauthorized, err)
+	}
+
 	// 请求处理
 	var operationLogGetListReq vo.OperationLogGetListReq
 	if err := c.ShouldBindQuery(&operationLogGetListReq); err != nil {
@@ -90,6 +96,12 @@ func (h *restHandler) getInfoHandler(c *gin.Context) {
 	// 异常捕获
 	defer responses.ApiRecover(c)
 
+	// 认证处理
+	err := requests.TokenAuthorization(c)
+	if err != nil {
+		_ = c.AbortWithError(http.StatusUnauthorized, err)
+	}
+
 	// 请求处理
 	var uriReq requests.IDUriReq
 	if err := c.ShouldBindUri(&uriReq); err != nil {
@@ -111,6 +123,12 @@ func (h *restHandler) getInfoHandler(c *gin.Context) {
 func (h *restHandler) createHandler(c *gin.Context) {
 	// 异常捕获
 	defer responses.ApiRecover(c)
+
+	// 认证处理
+	err := requests.TokenAuthorization(c)
+	if err != nil {
+		_ = c.AbortWithError(http.StatusUnauthorized, err)
+	}
 
 	// 请求处理
 	var operationLogCreateReq vo.OperationLogCreateReq
@@ -135,7 +153,14 @@ func (h *restHandler) createHandler(c *gin.Context) {
 
 
 func (h *restHandler) updateHandler(c *gin.Context) {
+	// 异常捕获
 	defer responses.ApiRecover(c)
+
+	// 认证处理
+	err := requests.TokenAuthorization(c)
+	if err != nil {
+		_ = c.AbortWithError(http.StatusUnauthorized, err)
+	}
 
 	// 请求处理
 	var uriReq requests.IDUriReq
@@ -177,6 +202,12 @@ func (h *restHandler) deleteHandler(c *gin.Context) {
 	// 异常捕获
 	defer responses.ApiRecover(c)
 
+	// 认证处理
+	err := requests.TokenAuthorization(c)
+	if err != nil {
+		_ = c.AbortWithError(http.StatusUnauthorized, err)
+	}
+
 	// 请求处理
 	var uriReq requests.IDUriReq
 	if err := c.ShouldBindUri(&uriReq); err != nil {
@@ -185,7 +216,7 @@ func (h *restHandler) deleteHandler(c *gin.Context) {
 	}
 
 	// 逻辑处理
-	err := h.operationLogEntity.DelOperationLog(uriReq.ID)
+	err = h.operationLogEntity.DelOperationLog(uriReq.ID)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
