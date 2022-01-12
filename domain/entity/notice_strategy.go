@@ -60,7 +60,7 @@ func (service *noticeStrategyEntity) GetNoticeStrategyInfo(id int) (data *vo.Not
 	data.Id = confInfo.Id
 	//data.Name = confInfo.Name
 	//data.Gender = confInfo.Gender
-	data.SetGenderDisplayName()
+	data.SetEnabledStateDisplayName()
 	return
 }
 
@@ -73,7 +73,7 @@ func (service *noticeStrategyEntity) GetNoticeStrategyList(filter map[string]int
 		item.Id = conf.Id
 		//item.Name = conf.Name
 		//item.Gender = conf.Gender
-		item.SetGenderDisplayName()
+		item.SetEnabledStateDisplayName()
 		data = append(data, item)
 	}
 	return

@@ -1,6 +1,7 @@
 package persistence
 
 import (
+	"encoding/json"
 	"go_project/domain/enums"
 	"go_project/domain/repository"
 	"go_project/infra/db"
@@ -31,85 +32,51 @@ func NewNoticeConfRepo() repository.NoticeConfRepoInterface {
 	return noticeConfRepo
 }
 
-func (repo *NoticeConfRepository) Create(data *model.NoticeConf) (id int, err error) {
-	// 创建时间
-	currentTime := time.Now()
-	data.CreatedAt = currentTime
-
-	result := repo.db.Create(&data)
-	id = data.Id
-	err = result.Error
-	//data.Id             // 返回插入数据的主键
-	//result.Error        // 返回 error
-	//result.RowsAffected // 返回插入记录的条数
-	return
-}
-
-func (repo *NoticeConfRepository) Update(id int, data map[string]interface{}) (err error) {
-	// 条件处理
-	condition := make(map[string]interface{})
-	condition["id"] = id
-	condition["deleted_state"] = enums.NotDeleted
-
-	// 更新时间
-	currentTime := time.Now()
-	data["updated_at"] = currentTime
-
-	err = repo.db.Model(&model.NoticeConf{}).Where(condition).Updates(data).Error
-	return
-}
-
-func (repo *NoticeConfRepository) Delete(id int) (err error) {
-	// 条件处理
-	condition := make(map[string]interface{})
-	condition["id"] = id
-	condition["deleted_state"] = enums.NotDeleted
-
-	// 逻辑删除
-	data := make(map[string]interface{})
-	data["deleted_state"] = enums.HasDeleted
-	// 删除时间
-	currentTime := time.Now()
-	data["deleted_at"] = currentTime
-
-	err = repo.db.Model(&model.NoticeConf{}).Where(condition).Updates(data).Error
-	return
-}
-
-func (repo *NoticeConfRepository) GetInfo(id int) (data *model.NoticeConf, err error) {
+func (repo *NoticeConfRepository) GetEmail() (data *model.NoticeConf, err error) {
 	// 临时打印SQL
 	// err = repo.db.Debug().First(&data, id).Error
 
 	// 条件处理
 	condition := make(map[string]interface{})
-	condition["id"] = id
+	condition["notice_type"] = enums.NoticeTypeEmail
 	condition["deleted_state"] = enums.NotDeleted
 
 	err = repo.db.Where(condition).First(&data).Error
 	return
 }
 
-func (repo *NoticeConfRepository) GetList(filter map[string]interface{}) (total int64, data []*model.NoticeConf, err error) {
-	// 条件处理
-	limit := 10
-	offset := 0
-	condition := make(map[string]interface{})
-	for k, v := range filter {
-		if k == "limit" {
-			limit = v.(int)
-		} else if k == "offset" {
-			offset = v.(int)
-		} else {
-			condition[k] = v
-		}
+func (repo *NoticeConfRepository) ModEmail(data map[string]interface{}) (err error) {
+	// 临时打印SQL
+	// err = repo.db.Debug().First(&data, id).Error
+
+	// 参数处理
+	configData, err := json.Marshal(data)
+	if err != nil {
+		return
 	}
+
+	// 条件处理
+	var noticeConf *model.NoticeConf
+	condition := make(map[string]interface{})
+	condition["notice_type"] = enums.NoticeTypeEmail
 	condition["deleted_state"] = enums.NotDeleted
+	err = repo.db.Where(condition).First(&noticeConf).Error
+	// 当时间
+	currentTime := time.Now()
 
-	// 总记录数
-	userObj := repo.db.Model(&model.NoticeConf{}).Where(condition)
-	userObj.Count(&total)
-
-	// 分页查询
-	err = userObj.Limit(limit).Offset(offset).Find(&data).Error
+	if err != nil {
+		// 创建记录
+		noticeConf = &model.NoticeConf{}
+		noticeConf.NoticeType = enums.NoticeTypeEmail
+		noticeConf.ConfigData = string(configData)
+		noticeConf.CreatedAt = currentTime
+		result := repo.db.Create(&noticeConf)
+		err = result.Error
+	} else {
+		// 更新记录
+		noticeConf.ConfigData = string(configData)
+		noticeConf.CreatedAt = currentTime
+		repo.db.Save(&noticeConf)
+	}
 	return
 }

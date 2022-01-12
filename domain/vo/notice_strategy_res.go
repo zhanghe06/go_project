@@ -6,20 +6,21 @@ import (
 
 // NoticeStrategyCreateRes .
 type NoticeStrategyCreateRes struct {
-	Id int // 用户id
+	Id int // id
 }
 
 // NoticeStrategyGetInfoRes .
 type NoticeStrategyGetInfoRes struct {
-	Id                int    `json:"id"`                  // 用户id
-	Name              string `json:"name"`                // 名称
-	Gender            int    `json:"gender"`              // 性别
-	EnabledState      int    `json:"enabled_state"`       // 启用状态
-	GenderDisplayName string `json:"gender_display_name"` // 性别（显示名称）
+	Id                      int    `json:"id"`                         // id
+	NoticeType              int    `json:"notice_type"`                // 通知类型（0:邮件,1:短信）
+	TriggerThreshold        int    `json:"trigger_threshold"`          // 触发阈值
+	EnabledState            int    `json:"enabled_state"`              // 启用状态（0:停用,1:启用）
+	ToEmails                string `json:"to_emails"`                  // 接收邮箱 (半角逗号分隔)
+	EnabledStateDisplayName string `json:"enabled_state_display_name"` // 接收邮箱 (半角逗号分隔)
 }
 
-func (res *NoticeStrategyGetInfoRes) SetGenderDisplayName() {
-	res.GenderDisplayName = enums.GenderType(res.Gender).DisplayName()
+func (res *NoticeStrategyGetInfoRes) SetEnabledStateDisplayName() {
+	res.EnabledStateDisplayName = enums.EnabledState(res.EnabledState).DisplayName()
 }
 
 // NoticeStrategyGetListRes .

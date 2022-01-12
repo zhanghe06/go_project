@@ -2,6 +2,7 @@ package cert
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"go_project/adapter/driver"
 	"go_project/domain/entity"
@@ -82,8 +83,8 @@ func (h *restHandler) getListHandler(c *gin.Context) {
 
 	// 响应处理
 	c.JSON(http.StatusOK, gin.H{
-		"total": total,
-		"data":  data,
+		"total_count": total,
+		"entries":  data,
 	})
 }
 
@@ -106,9 +107,7 @@ func (h *restHandler) getInfoHandler(c *gin.Context) {
 	}
 
 	// 响应处理
-	c.JSON(http.StatusOK, gin.H{
-		"data":  data,
-	})
+	c.JSON(http.StatusOK, data)
 }
 
 func (h *restHandler) createHandler(c *gin.Context) {
@@ -130,6 +129,7 @@ func (h *restHandler) createHandler(c *gin.Context) {
 	}
 
 	// 响应处理
+	c.Header("Location", c.FullPath() + fmt.Sprintf("/%d", id))
 	c.JSON(http.StatusCreated, gin.H{
 		"id":  id,
 	})
@@ -171,7 +171,7 @@ func (h *restHandler) updateHandler(c *gin.Context) {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
-	c.Status(204)
+	c.Status(http.StatusNoContent)
 }
 
 
@@ -194,5 +194,5 @@ func (h *restHandler) deleteHandler(c *gin.Context) {
 	}
 
 	// 响应处理
-	c.Status(204)
+	c.Status(http.StatusNoContent)
 }

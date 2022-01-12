@@ -73,7 +73,8 @@ CREATE TABLE IF NOT EXISTS `notice_conf`
     `created_by`    VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '创建人员',
     `updated_by`    VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '更新人员',
     `deleted_by`    VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '删除人员',
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    KEY `idx_created_at` (`created_at`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='通知配置';
 
