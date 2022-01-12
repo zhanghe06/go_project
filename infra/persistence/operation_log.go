@@ -31,10 +31,11 @@ func NewOperationLogRepo() repository.OperationLogRepoInterface {
 	return operationLogRepo
 }
 
-func (repo *OperationLogRepository) Create(data *model.OperationLog) (id int, err error) {
+func (repo *OperationLogRepository) Create(data *model.OperationLog, createdBy string) (id int, err error) {
 	// 创建时间
 	currentTime := time.Now()
 	data.CreatedAt = currentTime
+	data.CreatedBy = createdBy
 
 	result := repo.db.Create(&data)
 	id = data.Id
@@ -45,7 +46,7 @@ func (repo *OperationLogRepository) Create(data *model.OperationLog) (id int, er
 	return
 }
 
-func (repo *OperationLogRepository) Update(id int, data map[string]interface{}) (err error) {
+func (repo *OperationLogRepository) Update(id int, data map[string]interface{}, updatedBy string) (err error) {
 	// 条件处理
 	condition := make(map[string]interface{})
 	condition["id"] = id
@@ -54,12 +55,13 @@ func (repo *OperationLogRepository) Update(id int, data map[string]interface{}) 
 	// 更新时间
 	currentTime := time.Now()
 	data["updated_at"] = currentTime
+	data["updated_by"] = updatedBy
 
 	err = repo.db.Model(&model.OperationLog{}).Where(condition).Updates(data).Error
 	return
 }
 
-func (repo *OperationLogRepository) Delete(id int) (err error) {
+func (repo *OperationLogRepository) Delete(id int, deletedBy string) (err error) {
 	// 条件处理
 	condition := make(map[string]interface{})
 	condition["id"] = id
@@ -71,6 +73,7 @@ func (repo *OperationLogRepository) Delete(id int) (err error) {
 	// 删除时间
 	currentTime := time.Now()
 	data["deleted_at"] = currentTime
+	data["deleted_by"] = deletedBy
 
 	err = repo.db.Model(&model.OperationLog{}).Where(condition).Updates(data).Error
 	return

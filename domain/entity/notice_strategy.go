@@ -10,9 +10,9 @@ import (
 
 //go:generate mockgen -source=./notice_strategy.go -destination ./mock/mock_notice_strategy.go -package mock
 type NoticeStrategyEntityInterface interface {
-	AddNoticeStrategy(data *vo.NoticeStrategyCreateReq) (id int, err error)
-	DelNoticeStrategy(id int) (err error)
-	ModNoticeStrategy(id int, data map[string]interface{}) (err error)
+	AddNoticeStrategy(data *vo.NoticeStrategyCreateReq, createdBy string) (id int, err error)
+	DelNoticeStrategy(id int, deletedBy string) (err error)
+	ModNoticeStrategy(id int, data map[string]interface{}, updatedBy string) (err error)
 	GetNoticeStrategyInfo(id int) (data *vo.NoticeStrategyGetInfoRes, err error)
 	GetNoticeStrategyList(filter map[string]interface{}) (total int64, data []*vo.NoticeStrategyGetInfoRes, err error)
 }
@@ -37,20 +37,20 @@ func NewNoticeStrategyEntity() NoticeStrategyEntityInterface {
 	return noticeStrategyService
 }
 
-func (service *noticeStrategyEntity) AddNoticeStrategy(data *vo.NoticeStrategyCreateReq) (id int, err error) {
+func (service *noticeStrategyEntity) AddNoticeStrategy(data *vo.NoticeStrategyCreateReq, createdBy string) (id int, err error) {
 	// 参数处理
 	confInfo := &model.NoticeStrategy{}
 	//confInfo.Name = data.Name
 	//confInfo.Gender = *data.Gender
-	return service.noticeStrategyRepo.Create(confInfo)
+	return service.noticeStrategyRepo.Create(confInfo, createdBy)
 }
 
-func (service *noticeStrategyEntity) ModNoticeStrategy(id int, data map[string]interface{}) (err error) {
-	return service.noticeStrategyRepo.Update(id, data)
+func (service *noticeStrategyEntity) ModNoticeStrategy(id int, data map[string]interface{}, updatedBy string) (err error) {
+	return service.noticeStrategyRepo.Update(id, data, updatedBy)
 }
 
-func (service *noticeStrategyEntity) DelNoticeStrategy(id int) (err error) {
-	return service.noticeStrategyRepo.Delete(id)
+func (service *noticeStrategyEntity) DelNoticeStrategy(id int, deletedBy string) (err error) {
+	return service.noticeStrategyRepo.Delete(id, deletedBy)
 }
 
 func (service *noticeStrategyEntity) GetNoticeStrategyInfo(id int) (data *vo.NoticeStrategyGetInfoRes, err error) {

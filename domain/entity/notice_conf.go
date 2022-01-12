@@ -11,7 +11,7 @@ import (
 //go:generate mockgen -source=./notice_conf.go -destination ./mock/mock_notice_conf.go -package mock
 type NoticeConfEntityInterface interface {
 	GetNoticeConfEmail() (data *vo.NoticeConfGetEmailRes, err error)
-	ModNoticeConfEmail(data map[string]interface{}) (err error)
+	ModNoticeConfEmail(data map[string]interface{}, updatedBy string) (err error)
 }
 
 var (
@@ -45,6 +45,6 @@ func (service *noticeConfEntity) GetNoticeConfEmail() (data *vo.NoticeConfGetEma
 	return
 }
 
-func (service *noticeConfEntity) ModNoticeConfEmail(data map[string]interface{}) (err error) {
-	return service.noticeConfRepo.ModEmail(data)
+func (service *noticeConfEntity) ModNoticeConfEmail(data map[string]interface{}, updatedBy string) (err error) {
+	return service.noticeConfRepo.ModEmail(data, updatedBy)
 }

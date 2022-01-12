@@ -49,7 +49,7 @@ func (h *restHandler) getListHandler(c *gin.Context) {
 	defer responses.ApiRecover(c)
 
 	// 认证处理
-	err := requests.TokenAuthorization(c)
+	_, err := requests.TokenAuthorization(c)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusUnauthorized, err)
 	}
@@ -97,9 +97,10 @@ func (h *restHandler) getInfoHandler(c *gin.Context) {
 	defer responses.ApiRecover(c)
 
 	// 认证处理
-	err := requests.TokenAuthorization(c)
+	_, err := requests.TokenAuthorization(c)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusUnauthorized, err)
+		return
 	}
 
 	// 请求处理
@@ -125,9 +126,10 @@ func (h *restHandler) createHandler(c *gin.Context) {
 	defer responses.ApiRecover(c)
 
 	// 认证处理
-	err := requests.TokenAuthorization(c)
+	userInfo, err := requests.TokenAuthorization(c)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusUnauthorized, err)
+		return
 	}
 
 	// 请求处理
@@ -138,7 +140,7 @@ func (h *restHandler) createHandler(c *gin.Context) {
 	}
 
 	// 逻辑处理
-	id, err := h.operationLogEntity.AddOperationLog(&operationLogCreateReq)
+	id, err := h.operationLogEntity.AddOperationLog(&operationLogCreateReq, userInfo.ID)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -157,9 +159,10 @@ func (h *restHandler) updateHandler(c *gin.Context) {
 	defer responses.ApiRecover(c)
 
 	// 认证处理
-	err := requests.TokenAuthorization(c)
+	userInfo, err := requests.TokenAuthorization(c)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusUnauthorized, err)
+		return
 	}
 
 	// 请求处理
@@ -189,7 +192,7 @@ func (h *restHandler) updateHandler(c *gin.Context) {
 	}
 
 	// 逻辑处理
-	err = h.operationLogEntity.ModOperationLog(uriReq.ID, data)
+	err = h.operationLogEntity.ModOperationLog(uriReq.ID, data, userInfo.ID)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -203,9 +206,10 @@ func (h *restHandler) deleteHandler(c *gin.Context) {
 	defer responses.ApiRecover(c)
 
 	// 认证处理
-	err := requests.TokenAuthorization(c)
+	userInfo, err := requests.TokenAuthorization(c)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusUnauthorized, err)
+		return
 	}
 
 	// 请求处理
@@ -216,7 +220,7 @@ func (h *restHandler) deleteHandler(c *gin.Context) {
 	}
 
 	// 逻辑处理
-	err = h.operationLogEntity.DelOperationLog(uriReq.ID)
+	err = h.operationLogEntity.DelOperationLog(uriReq.ID, userInfo.ID)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return

@@ -49,9 +49,10 @@ func (h *restHandler) getListHandler(c *gin.Context) {
 	defer responses.ApiRecover(c)
 
 	// 认证处理
-	err := requests.TokenAuthorization(c)
+	_, err := requests.TokenAuthorization(c)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusUnauthorized, err)
+		return
 	}
 
 	// 请求处理
@@ -97,9 +98,10 @@ func (h *restHandler) getInfoHandler(c *gin.Context) {
 	defer responses.ApiRecover(c)
 
 	// 认证处理
-	err := requests.TokenAuthorization(c)
+	_, err := requests.TokenAuthorization(c)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusUnauthorized, err)
+		return
 	}
 
 	// 请求处理
@@ -125,9 +127,10 @@ func (h *restHandler) createHandler(c *gin.Context) {
 	defer responses.ApiRecover(c)
 
 	// 认证处理
-	err := requests.TokenAuthorization(c)
+	userInfo, err := requests.TokenAuthorization(c)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusUnauthorized, err)
+		return
 	}
 
 	// 请求处理
@@ -138,7 +141,7 @@ func (h *restHandler) createHandler(c *gin.Context) {
 	}
 
 	// 逻辑处理
-	id, err := h.noticeStrategyEntity.AddNoticeStrategy(&noticeStrategyCreateReq)
+	id, err := h.noticeStrategyEntity.AddNoticeStrategy(&noticeStrategyCreateReq, userInfo.ID)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -157,9 +160,10 @@ func (h *restHandler) updateHandler(c *gin.Context) {
 	defer responses.ApiRecover(c)
 
 	// 认证处理
-	err := requests.TokenAuthorization(c)
+	userInfo, err := requests.TokenAuthorization(c)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusUnauthorized, err)
+		return
 	}
 
 	// 请求处理
@@ -189,7 +193,7 @@ func (h *restHandler) updateHandler(c *gin.Context) {
 	}
 
 	// 逻辑处理
-	err = h.noticeStrategyEntity.ModNoticeStrategy(uriReq.ID, data)
+	err = h.noticeStrategyEntity.ModNoticeStrategy(uriReq.ID, data, userInfo.ID)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -203,9 +207,10 @@ func (h *restHandler) deleteHandler(c *gin.Context) {
 	defer responses.ApiRecover(c)
 
 	// 认证处理
-	err := requests.TokenAuthorization(c)
+	userInfo, err := requests.TokenAuthorization(c)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusUnauthorized, err)
+		return
 	}
 
 	// 请求处理
@@ -216,7 +221,7 @@ func (h *restHandler) deleteHandler(c *gin.Context) {
 	}
 
 	// 逻辑处理
-	err = h.noticeStrategyEntity.DelNoticeStrategy(uriReq.ID)
+	err = h.noticeStrategyEntity.DelNoticeStrategy(uriReq.ID, userInfo.ID)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return

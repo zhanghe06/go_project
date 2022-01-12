@@ -10,9 +10,9 @@ import (
 
 //go:generate mockgen -source=./cert.go -destination ./mock/mock_cert.go -package mock
 type CertEntityInterface interface {
-	AddCert(data *vo.CertCreateReq) (id int, err error)
-	DelCert(id int) (err error)
-	ModCert(id int, data map[string]interface{}) (err error)
+	AddCert(data *vo.CertCreateReq, createdBy string) (id int, err error)
+	DelCert(id int, deletedBy string) (err error)
+	ModCert(id int, data map[string]interface{}, updatedBy string) (err error)
 	GetCertInfo(id int) (data *vo.CertGetInfoRes, err error)
 	GetCertList(filter map[string]interface{}) (total int64, data []*vo.CertGetInfoRes, err error)
 }
@@ -37,21 +37,21 @@ func NewCertEntity() CertEntityInterface {
 	return certService
 }
 
-func (service *certEntity) AddCert(data *vo.CertCreateReq) (id int, err error) {
+func (service *certEntity) AddCert(data *vo.CertCreateReq, createdBy string) (id int, err error) {
 	// 参数处理
 	certInfo := &model.Cert{}
 	// todo
 	//certInfo.Name = data.Name
 	//certInfo.Gender = *data.Gender
-	return service.certRepo.Create(certInfo)
+	return service.certRepo.Create(certInfo, createdBy)
 }
 
-func (service *certEntity) ModCert(id int, data map[string]interface{}) (err error) {
-	return service.certRepo.Update(id, data)
+func (service *certEntity) ModCert(id int, data map[string]interface{}, updatedBy string) (err error) {
+	return service.certRepo.Update(id, data, updatedBy)
 }
 
-func (service *certEntity) DelCert(id int) (err error) {
-	return service.certRepo.Delete(id)
+func (service *certEntity) DelCert(id int, deletedBy string) (err error) {
+	return service.certRepo.Delete(id, deletedBy)
 }
 
 func (service *certEntity) GetCertInfo(id int) (data *vo.CertGetInfoRes, err error) {

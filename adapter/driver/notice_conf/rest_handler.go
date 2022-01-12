@@ -43,9 +43,10 @@ func (h *restHandler) getEmailHandler(c *gin.Context) {
 	defer responses.ApiRecover(c)
 
 	// 认证处理
-	err := requests.TokenAuthorization(c)
+	_, err := requests.TokenAuthorization(c)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusUnauthorized, err)
+		return
 	}
 
 	// 逻辑处理
@@ -64,9 +65,10 @@ func (h *restHandler) modEmailHandler(c *gin.Context) {
 	defer responses.ApiRecover(c)
 
 	// 认证处理
-	err := requests.TokenAuthorization(c)
+	userInfo, err := requests.TokenAuthorization(c)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusUnauthorized, err)
+		return
 	}
 
 	// 逻辑处理
@@ -89,7 +91,7 @@ func (h *restHandler) modEmailHandler(c *gin.Context) {
 		return
 	}
 
-	err = h.noticeConfEntity.ModNoticeConfEmail(data)
+	err = h.noticeConfEntity.ModNoticeConfEmail(data, userInfo.ID)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusInternalServerError, err)
 		return

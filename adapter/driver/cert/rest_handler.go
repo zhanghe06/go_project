@@ -41,7 +41,7 @@ func (h *restHandler) RegisterAPI(engine *gin.Engine) {
 	engine.GET("/cert", h.getListHandler)
 	engine.POST("/cert", h.createHandler)
 	engine.GET("/cert/:id", h.getInfoHandler)
-	engine.PUT("/cert/:id", h.updateHandler)
+	//engine.PUT("/cert/:id", h.updateHandler)
 	engine.DELETE("/cert/:id", h.deleteHandler)
 }
 
@@ -122,7 +122,7 @@ func (h *restHandler) createHandler(c *gin.Context) {
 	}
 
 	// 逻辑处理
-	id, err := h.certEntity.AddCert(&certCreateReq)
+	id, err := h.certEntity.AddCert(&certCreateReq, "SAP")
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -167,7 +167,7 @@ func (h *restHandler) updateHandler(c *gin.Context) {
 	}
 
 	// 逻辑处理
-	err = h.certEntity.ModCert(uriReq.ID, data)
+	err = h.certEntity.ModCert(uriReq.ID, data, "SAP")
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -180,6 +180,13 @@ func (h *restHandler) deleteHandler(c *gin.Context) {
 	// 异常捕获
 	defer responses.ApiRecover(c)
 
+	// 认证处理
+	userInfo, err := requests.TokenAuthorization(c)
+	if err != nil {
+		_ = c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
+
 	// 请求处理
 	var uriReq requests.IDUriReq
 	if err := c.ShouldBindUri(&uriReq); err != nil {
@@ -188,7 +195,7 @@ func (h *restHandler) deleteHandler(c *gin.Context) {
 	}
 
 	// 逻辑处理
-	err := h.certEntity.DelCert(uriReq.ID)
+	err = h.certEntity.DelCert(uriReq.ID, userInfo.ID)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return

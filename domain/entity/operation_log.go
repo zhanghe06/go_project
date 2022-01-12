@@ -10,9 +10,9 @@ import (
 
 //go:generate mockgen -source=./operation_log.go -destination ./mock/mock_operation_log.go -package mock
 type OperationLogEntityInterface interface {
-	AddOperationLog(data *vo.OperationLogCreateReq) (id int, err error)
-	DelOperationLog(id int) (err error)
-	ModOperationLog(id int, data map[string]interface{}) (err error)
+	AddOperationLog(data *vo.OperationLogCreateReq, createdBy string) (id int, err error)
+	DelOperationLog(id int, deletedBy string) (err error)
+	ModOperationLog(id int, data map[string]interface{}, updatedBy string) (err error)
 	GetOperationLogInfo(id int) (data *vo.OperationLogGetInfoRes, err error)
 	GetOperationLogList(filter map[string]interface{}) (total int64, data []*vo.OperationLogGetInfoRes, err error)
 }
@@ -37,20 +37,20 @@ func NewOperationLogEntity() OperationLogEntityInterface {
 	return operationLogService
 }
 
-func (service *operationLogEntity) AddOperationLog(data *vo.OperationLogCreateReq) (id int, err error) {
+func (service *operationLogEntity) AddOperationLog(data *vo.OperationLogCreateReq, createdBy string) (id int, err error) {
 	// 参数处理
 	confInfo := &model.OperationLog{}
 	//confInfo.Name = data.Name
 	//confInfo.Gender = *data.Gender
-	return service.operationLogRepo.Create(confInfo)
+	return service.operationLogRepo.Create(confInfo, createdBy)
 }
 
-func (service *operationLogEntity) ModOperationLog(id int, data map[string]interface{}) (err error) {
-	return service.operationLogRepo.Update(id, data)
+func (service *operationLogEntity) ModOperationLog(id int, data map[string]interface{}, updatedBy string) (err error) {
+	return service.operationLogRepo.Update(id, data, updatedBy)
 }
 
-func (service *operationLogEntity) DelOperationLog(id int) (err error) {
-	return service.operationLogRepo.Delete(id)
+func (service *operationLogEntity) DelOperationLog(id int, deletedBy string) (err error) {
+	return service.operationLogRepo.Delete(id, deletedBy)
 }
 
 func (service *operationLogEntity) GetOperationLogInfo(id int) (data *vo.OperationLogGetInfoRes, err error) {

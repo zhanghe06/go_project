@@ -31,10 +31,11 @@ func NewNoticeStrategyRepo() repository.NoticeStrategyRepoInterface {
 	return noticeStrategyRepo
 }
 
-func (repo *NoticeStrategyRepository) Create(data *model.NoticeStrategy) (id int, err error) {
+func (repo *NoticeStrategyRepository) Create(data *model.NoticeStrategy, createdBy string) (id int, err error) {
 	// 创建时间
 	currentTime := time.Now()
 	data.CreatedAt = currentTime
+	data.CreatedBy = createdBy
 
 	result := repo.db.Create(&data)
 	id = data.Id
@@ -45,7 +46,7 @@ func (repo *NoticeStrategyRepository) Create(data *model.NoticeStrategy) (id int
 	return
 }
 
-func (repo *NoticeStrategyRepository) Update(id int, data map[string]interface{}) (err error) {
+func (repo *NoticeStrategyRepository) Update(id int, data map[string]interface{}, updatedBy string) (err error) {
 	// 条件处理
 	condition := make(map[string]interface{})
 	condition["id"] = id
@@ -54,12 +55,13 @@ func (repo *NoticeStrategyRepository) Update(id int, data map[string]interface{}
 	// 更新时间
 	currentTime := time.Now()
 	data["updated_at"] = currentTime
+	data["updated_by"] = updatedBy
 
 	err = repo.db.Model(&model.NoticeStrategy{}).Where(condition).Updates(data).Error
 	return
 }
 
-func (repo *NoticeStrategyRepository) Delete(id int) (err error) {
+func (repo *NoticeStrategyRepository) Delete(id int, deletedBy string) (err error) {
 	// 条件处理
 	condition := make(map[string]interface{})
 	condition["id"] = id
@@ -71,6 +73,7 @@ func (repo *NoticeStrategyRepository) Delete(id int) (err error) {
 	// 删除时间
 	currentTime := time.Now()
 	data["deleted_at"] = currentTime
+	data["deleted_by"] = deletedBy
 
 	err = repo.db.Model(&model.NoticeStrategy{}).Where(condition).Updates(data).Error
 	return

@@ -45,7 +45,7 @@ func (repo *NoticeConfRepository) GetEmail() (data *model.NoticeConf, err error)
 	return
 }
 
-func (repo *NoticeConfRepository) ModEmail(data map[string]interface{}) (err error) {
+func (repo *NoticeConfRepository) ModEmail(data map[string]interface{}, updatedBy string) (err error) {
 	// 临时打印SQL
 	// err = repo.db.Debug().First(&data, id).Error
 
@@ -70,12 +70,14 @@ func (repo *NoticeConfRepository) ModEmail(data map[string]interface{}) (err err
 		noticeConf.NoticeType = enums.NoticeTypeEmail
 		noticeConf.ConfigData = string(configData)
 		noticeConf.CreatedAt = currentTime
+		noticeConf.CreatedBy = updatedBy
 		result := repo.db.Create(&noticeConf)
 		err = result.Error
 	} else {
 		// 更新记录
 		noticeConf.ConfigData = string(configData)
-		noticeConf.CreatedAt = currentTime
+		noticeConf.UpdatedAt = currentTime
+		noticeConf.UpdatedBy = updatedBy
 		repo.db.Save(&noticeConf)
 	}
 	return
