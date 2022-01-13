@@ -1,0 +1,4 @@
+language: zh_tw
+code:
+msg:
+  InternalServerError: 內部服務器錯誤

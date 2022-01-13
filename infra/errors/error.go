@@ -4,6 +4,10 @@ import (
 	"encoding/json"
 )
 
+var (
+	Lang = "en_US"
+)
+
 type ApiError struct {
 	ErrCode int `json:"err_code"`
 	ErrMsg string `json:"err_msg"`
@@ -74,34 +78,34 @@ const (
 const (
 	// ErrMsgUser 用户模块
 	ErrMsgUser = ""
-	ErrMsgUserNotFound = ""
-	ErrMsgUserDisabled = ""
+	ErrMsgUserNotFound = "UserNotFound"
+	ErrMsgUserDisabled = "UserDisabled"
 )
 
 const (
 	// ErrMsgCert 证书模块
 	ErrMsgCert = ""
-	ErrMsgCertNotFound = ""
-	ErrMsgCertDisabled = ""
+	ErrMsgCertNotFound = "CertNotFound"
+	ErrMsgCertDisabled = "CertDisabled"
 )
 
 const (
 	// ErrMsgNoticeConf 通知配置
 	ErrMsgNoticeConf = ""
-	ErrMsgNoticeConfNotFound = ""
-	ErrMsgNoticeConfDisabled = ""
+	ErrMsgNoticeConfNotFound = "NoticeConfNotFound"
+	ErrMsgNoticeConfDisabled = "NoticeConfDisabled"
 )
 
 const (
 	// ErrMsgNoticeStrategy 通知策略
 	ErrMsgNoticeStrategy = ""
-	ErrMsgNoticeStrategyNotFound = ""
-	ErrMsgNoticeStrategyDisabled = ""
+	ErrMsgNoticeStrategyNotFound = "NoticeStrategyNotFound"
+	ErrMsgNoticeStrategyDisabled = "NoticeStrategyDisabled"
 )
 
 const (
 	// ErrMsgOperationLog 操作日志
 	ErrMsgOperationLog = ""
-	ErrMsgOperationLogNotFound = ""
-	ErrMsgOperationLogDisabled = ""
+	ErrMsgOperationLogNotFound = "OperationLogNotFound"
+	ErrMsgOperationLogDisabled = "OperationLogDisabled"
 )

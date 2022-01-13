@@ -1,0 +1,4 @@
+language: zh_cn
+code:
+msg:
+  InternalServerError: 内部服务器错误
