@@ -11,4 +11,5 @@ type CertRepoInterface interface {
 	Delete(id int, deletedBy string) (err error)
 	GetInfo(id int) (data *model.Cert, err error)
 	GetList(filter map[string]interface{}) (total int64, data []*model.Cert, err error)
+	Enable(id int, updatedBy string) (err error)
 }

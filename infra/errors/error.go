@@ -67,8 +67,8 @@ const (
 const (
 	// ErrMsg 通用异常
 	ErrMsg = ""
-	ErrMsgInternalServerError = ""
-	ErrMsgUnauthorized = ""
+	ErrMsgInternalServerError = "InternalServerError"
+	ErrMsgUnauthorized = "Unauthorized"
 )
 
 const (

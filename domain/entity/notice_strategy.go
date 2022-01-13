@@ -40,8 +40,11 @@ func NewNoticeStrategyEntity() NoticeStrategyEntityInterface {
 func (service *noticeStrategyEntity) AddNoticeStrategy(data *vo.NoticeStrategyCreateReq, createdBy string) (id int, err error) {
 	// 参数处理
 	confInfo := &model.NoticeStrategy{}
-	//confInfo.Name = data.Name
-	//confInfo.Gender = *data.Gender
+	confInfo.NoticeType = *data.NoticeType
+	confInfo.TriggerThreshold = *data.TriggerThreshold
+	confInfo.ToEmails = data.ToEmails
+	confInfo.EnabledState = *data.EnabledState
+
 	return service.noticeStrategyRepo.Create(confInfo, createdBy)
 }
 

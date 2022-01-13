@@ -7,6 +7,9 @@ import (
 // Cert 证书管理
 type Cert struct {
 	Id                 int          `gorm:"column:id;type:int(11);primary_key;AUTO_INCREMENT" json:"id"`
+	AuthId             string       `gorm:"column:auth_id;type:varchar(32);NOT NULL" json:"auth_id"`                                 // 客户端ID
+	PVersion           string       `gorm:"column:p_version;type:varchar(32);NOT NULL" json:"p_version"`                             // 接口版本
+	ContRep            string       `gorm:"column:cont_rep;type:varchar(32);NOT NULL" json:"cont_rep"`                               // 内容存储库
 	SerialNumber       string       `gorm:"column:serial_number;type:varchar(20);NOT NULL" json:"serial_number"`                     // 证书序列号
 	Version            int          `gorm:"column:version;type:tinyint(4);default:0;NOT NULL" json:"version"`                        // 证书版本（0:V1,1:V2,2:V3）
 	IssuerName         string       `gorm:"column:issuer_name;type:varchar(64);NOT NULL" json:"issuer_name"`                         // 颁发机构

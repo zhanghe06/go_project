@@ -116,3 +116,25 @@ func (repo *CertRepository) GetList(filter map[string]interface{}) (total int64,
 	err = userObj.Limit(limit).Offset(offset).Find(&data).Error
 	return
 }
+
+func (repo *CertRepository) Enable(id int, updatedBy string) (err error) {
+	// 更新时间
+	currentTime := time.Now()
+
+	disableData := make(map[string]interface{})
+	disableData["enabled_state"] = enums.Disabled
+	disableData["updated_at"] = currentTime
+	disableData["updated_by"] = updatedBy
+
+	err = repo.db.Model(&model.Cert{}).Where("id <> ? AND enabled_state = ?", id, enums.Enabled).Updates(disableData).Error
+	if err != nil {
+		return
+	}
+
+	enabledData := make(map[string]interface{})
+	enabledData["enabled_state"] = enums.Enabled
+	disableData["updated_at"] = currentTime
+	disableData["updated_by"] = updatedBy
+	err = repo.db.Model(&model.Cert{}).Where("id = ?", id).Updates(enabledData).Error
+	return
+}

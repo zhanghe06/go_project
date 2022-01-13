@@ -5,6 +5,9 @@ USE `sap_cert_mgt`;
 CREATE TABLE IF NOT EXISTS `cert`
 (
     `id`                  INT         NOT NULL AUTO_INCREMENT,
+    `auth_id`             VARCHAR(32) NOT NULL DEFAULT '' COMMENT '客户端ID',
+    `p_version`           VARCHAR(32) NOT NULL DEFAULT '' COMMENT '接口版本',
+    `cont_rep`            VARCHAR(32) NOT NULL DEFAULT '' COMMENT '内容存储库',
     `serial_number`       VARCHAR(20) NOT NULL DEFAULT '' COMMENT '证书序列号',
     `version`             TINYINT     NOT NULL DEFAULT 0 COMMENT '证书版本（0:V1,1:V2,2:V3）',
     `issuer_name`         VARCHAR(64) NOT NULL DEFAULT '' COMMENT '颁发机构',

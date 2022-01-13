@@ -40,10 +40,24 @@ func NewCertEntity() CertEntityInterface {
 func (service *certEntity) AddCert(data *vo.CertCreateReq, createdBy string) (id int, err error) {
 	// 参数处理
 	certInfo := &model.Cert{}
-	// todo
-	//certInfo.Name = data.Name
-	//certInfo.Gender = *data.Gender
-	return service.certRepo.Create(certInfo, createdBy)
+	certInfo.AuthId = data.AuthId
+	certInfo.PVersion = data.PVersion
+	certInfo.ContRep = data.ContRep
+	certInfo.SerialNumber = data.SerialNumber
+	certInfo.Version = *data.Version
+	certInfo.IssuerName = data.IssuerName
+	certInfo.SignatureAlgorithm = data.SignatureAlgorithm
+	certInfo.NotBefore = data.NotBefore
+	certInfo.NotAfter = data.NotAfter
+	certInfo.EnabledState = *data.EnabledState
+	// 创建证书
+	id, err = service.certRepo.Create(certInfo, createdBy)
+	if err != nil {
+		return
+	}
+	// 启用证书
+	err = service.certRepo.Enable(id, createdBy)
+	return
 }
 
 func (service *certEntity) ModCert(id int, data map[string]interface{}, updatedBy string) (err error) {
@@ -59,9 +73,18 @@ func (service *certEntity) GetCertInfo(id int) (data *vo.CertGetInfoRes, err err
 	// 响应处理
 	data = &vo.CertGetInfoRes{}
 	data.Id = certInfo.Id
-	//data.Name = certInfo.Name
-	//data.Gender = certInfo.Gender
-	data.SetGenderDisplayName()
+	data.AuthId = certInfo.AuthId
+	data.PVersion = certInfo.PVersion
+	data.ContRep = certInfo.ContRep
+	data.SerialNumber = certInfo.SerialNumber
+	data.Version = certInfo.Version
+	data.IssuerName = certInfo.IssuerName
+	data.SignatureAlgorithm = certInfo.SignatureAlgorithm
+	data.NotBefore = certInfo.NotBefore
+	data.NotAfter = certInfo.NotAfter
+	data.EnabledState = certInfo.EnabledState
+	data.SetVersionDisplayName()
+	data.SetEnabledStateDisplayName()
 	return
 }
 
@@ -69,12 +92,21 @@ func (service *certEntity) GetCertList(filter map[string]interface{}) (total int
 	total, certList, err := service.certRepo.GetList(filter)
 	// 响应处理
 	data = make([]*vo.CertGetInfoRes, 0)
-	for _, cert := range certList {
+	for _, certInfo := range certList {
 		item := &vo.CertGetInfoRes{}
-		item.Id = cert.Id
-		//item.Name = cert.Name
-		//item.Gender = cert.Gender
-		item.SetGenderDisplayName()
+		item.Id = certInfo.Id
+		item.AuthId = certInfo.AuthId
+		item.PVersion = certInfo.PVersion
+		item.ContRep = certInfo.ContRep
+		item.SerialNumber = certInfo.SerialNumber
+		item.Version = certInfo.Version
+		item.IssuerName = certInfo.IssuerName
+		item.SignatureAlgorithm = certInfo.SignatureAlgorithm
+		item.NotBefore = certInfo.NotBefore
+		item.NotAfter = certInfo.NotAfter
+		item.EnabledState = certInfo.EnabledState
+		item.SetVersionDisplayName()
+		item.SetEnabledStateDisplayName()
 		data = append(data, item)
 	}
 	return
