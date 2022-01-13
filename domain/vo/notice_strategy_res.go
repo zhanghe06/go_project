@@ -16,7 +16,12 @@ type NoticeStrategyGetInfoRes struct {
 	TriggerThreshold        int    `json:"trigger_threshold"`          // 触发阈值
 	EnabledState            int    `json:"enabled_state"`              // 启用状态（0:停用,1:启用）
 	ToEmails                string `json:"to_emails"`                  // 接收邮箱 (半角逗号分隔)
-	EnabledStateDisplayName string `json:"enabled_state_display_name"` // 接收邮箱 (半角逗号分隔)
+	NoticeTypeDisplayName   string `json:"notice_type_display_name"`   // 通知类型 (显示信息)
+	EnabledStateDisplayName string `json:"enabled_state_display_name"` // 启用状态 (显示信息)
+}
+
+func (res *NoticeStrategyGetInfoRes) SetNoticeTypeDisplayName() {
+	res.NoticeTypeDisplayName = enums.NoticeType(res.NoticeType).DisplayName()
 }
 
 func (res *NoticeStrategyGetInfoRes) SetEnabledStateDisplayName() {

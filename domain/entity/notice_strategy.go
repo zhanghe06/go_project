@@ -61,8 +61,11 @@ func (service *noticeStrategyEntity) GetNoticeStrategyInfo(id int) (data *vo.Not
 	// 响应处理
 	data = &vo.NoticeStrategyGetInfoRes{}
 	data.Id = confInfo.Id
-	//data.Name = confInfo.Name
-	//data.Gender = confInfo.Gender
+	data.NoticeType = confInfo.NoticeType
+	data.TriggerThreshold = confInfo.TriggerThreshold
+	data.EnabledState = confInfo.EnabledState
+	data.ToEmails = confInfo.ToEmails
+	data.SetNoticeTypeDisplayName()
 	data.SetEnabledStateDisplayName()
 	return
 }
@@ -71,11 +74,14 @@ func (service *noticeStrategyEntity) GetNoticeStrategyList(filter map[string]int
 	total, confList, err := service.noticeStrategyRepo.GetList(filter)
 	// 响应处理
 	data = make([]*vo.NoticeStrategyGetInfoRes, 0)
-	for _, conf := range confList {
+	for _, confInfo := range confList {
 		item := &vo.NoticeStrategyGetInfoRes{}
-		item.Id = conf.Id
-		//item.Name = conf.Name
-		//item.Gender = conf.Gender
+		item.Id = confInfo.Id
+		item.NoticeType = confInfo.NoticeType
+		item.TriggerThreshold = confInfo.TriggerThreshold
+		item.EnabledState = confInfo.EnabledState
+		item.ToEmails = confInfo.ToEmails
+		item.SetNoticeTypeDisplayName()
 		item.SetEnabledStateDisplayName()
 		data = append(data, item)
 	}
