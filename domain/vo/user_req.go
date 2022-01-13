@@ -7,15 +7,18 @@ type UserCreateReq struct {
 }
 
 // UserGetListReq .
+// http://0.0.0.0:8080/user?limit=1 显示限量数据
+// http://0.0.0.0:8080/user?limit=0 显示全量数据
+// http://0.0.0.0:8080/user?limit=  显示全量数据
 type UserGetListReq struct {
-	Limit  int    `binding:"omitempty" form:"limit,omitempty" json:"limit,omitempty"`
-	Offset int    `binding:"omitempty" form:"offset,omitempty" json:"offset,omitempty"`
+	Limit  *int   `binding:"omitempty" form:"limit,omitempty" json:"limit,omitempty"`
+	Offset *int   `binding:"omitempty" form:"offset,omitempty" json:"offset,omitempty"`
 	Name   string `binding:"omitempty" form:"name,omitempty" json:"name,omitempty"`
 }
 
 // UserUpdateReq .
 type UserUpdateReq struct {
-	Name         string `binding:"omitempty" json:"name"`
-	Gender       int    `binding:"omitempty" json:"gender"`
-	EnabledState string `binding:"omitempty" json:"enabled_state"`
+	Name         string `binding:"omitempty" json:"name,omitempty"`
+	Gender       *int   `binding:"omitempty" json:"gender,omitempty"`
+	EnabledState string `binding:"omitempty" json:"enabled_state,omitempty"`
 }

@@ -96,9 +96,9 @@ func (repo *UserRepository) GetList(filter map[string]interface{}) (total int64,
 	condition := make(map[string]interface{})
 	for k, v := range filter {
 		if k == "limit" {
-			limit = v.(int)
+			limit = int(v.(float64))
 		} else if k == "offset" {
-			offset = v.(int)
+			offset = int(v.(float64))
 		} else {
 			condition[k] = v
 		}

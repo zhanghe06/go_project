@@ -26,8 +26,7 @@ func TestUserEntity(t *testing.T) {
 		var id int
 		var err error
 
-		var gender *int
-		gender = new(int)
+		gender := new(int)
 		*gender = 1
 		req = &vo.UserCreateReq{
 			Name:   "",
