@@ -89,7 +89,7 @@ func (repo *UserRepository) GetInfo(id int) (data *model.User, err error) {
 	return
 }
 
-func (repo *UserRepository) GetList(filter map[string]interface{}) (total int64, data []*model.User, err error) {
+func (repo *UserRepository) GetList(filter map[string]interface{}, args ...interface{}) (total int64, data []*model.User, err error) {
 	// 条件处理
 	limit := 10
 	offset := 0
@@ -106,10 +106,15 @@ func (repo *UserRepository) GetList(filter map[string]interface{}) (total int64,
 	condition["deleted_state"] = enums.NotDeleted
 
 	// 总记录数
-	userObj := repo.db.Model(&model.User{}).Where(condition)
-	userObj.Count(&total)
+	dbQuery := repo.db.Model(&model.User{}).Where(condition)
+	if len(args) >= 2 {
+		dbQuery = dbQuery.Where(args[0], args[1:]...)
+	} else if len(args) >= 1 {
+		dbQuery = dbQuery.Where(args[0])
+	}
+	dbQuery.Count(&total)
 
 	// 分页查询
-	err = userObj.Limit(limit).Offset(offset).Find(&data).Error
+	err = dbQuery.Limit(limit).Offset(offset).Find(&data).Error
 	return
 }

@@ -14,7 +14,7 @@ type UserEntityInterface interface {
 	DelUser(id int) (err error)
 	ModUser(id int, data map[string]interface{}) (err error)
 	GetUserInfo(id int) (data *vo.UserGetInfoRes, err error)
-	GetUserList(filter map[string]interface{}) (total int64, data []*vo.UserGetInfoRes, err error)
+	GetUserList(filter map[string]interface{}, args ...interface{}) (total int64, data []*vo.UserGetInfoRes, err error)
 }
 
 var (
@@ -64,8 +64,8 @@ func (service *userEntity) GetUserInfo(id int) (data *vo.UserGetInfoRes, err err
 	return
 }
 
-func (service *userEntity) GetUserList(filter map[string]interface{}) (total int64, data []*vo.UserGetInfoRes, err error) {
-	total, userList, err := service.userRepo.GetList(filter)
+func (service *userEntity) GetUserList(filter map[string]interface{}, args ...interface{}) (total int64, data []*vo.UserGetInfoRes, err error) {
+	total, userList, err := service.userRepo.GetList(filter, args...)
 	// 响应处理
 	data = make([]*vo.UserGetInfoRes, 0)
 	for _, user := range userList {

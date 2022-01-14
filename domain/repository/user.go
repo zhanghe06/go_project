@@ -10,5 +10,5 @@ type UserRepoInterface interface {
 	Update(id int, data map[string]interface{}) (err error)
 	Delete(id int) (err error)
 	GetInfo(id int) (data *model.User, err error)
-	GetList(filter map[string]interface{}) (total int64, data []*model.User, err error)
+	GetList(filter map[string]interface{}, args ...interface{}) (total int64, data []*model.User, err error)
 }

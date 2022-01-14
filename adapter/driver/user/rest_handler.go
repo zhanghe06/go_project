@@ -72,7 +72,10 @@ func (h *restHandler) getListHandler(c *gin.Context) {
 	}
 
 	// 逻辑处理
-	total, data, err := h.userEntity.GetUserList(filter)
+	filterArgs := make([]interface{}, 0)
+	// filterArgs = append(filterArgs, "name <> ?")
+	// filterArgs = append(filterArgs, "呵呵")
+	total, data, err := h.userEntity.GetUserList(filter, filterArgs...)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
