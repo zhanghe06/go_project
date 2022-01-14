@@ -57,30 +57,30 @@ func (service *noticeStrategyEntity) DelNoticeStrategy(id int, deletedBy string)
 }
 
 func (service *noticeStrategyEntity) GetNoticeStrategyInfo(id int) (data *vo.NoticeStrategyGetInfoRes, err error) {
-	confInfo, err := service.noticeStrategyRepo.GetInfo(id)
+	resInfo, err := service.noticeStrategyRepo.GetInfo(id)
 	// 响应处理
 	data = &vo.NoticeStrategyGetInfoRes{}
-	data.Id = confInfo.Id
-	data.NoticeType = confInfo.NoticeType
-	data.TriggerThreshold = confInfo.TriggerThreshold
-	data.EnabledState = confInfo.EnabledState
-	data.ToEmails = confInfo.ToEmails
+	data.Id = resInfo.Id
+	data.NoticeType = resInfo.NoticeType
+	data.TriggerThreshold = resInfo.TriggerThreshold
+	data.EnabledState = resInfo.EnabledState
+	data.ToEmails = resInfo.ToEmails
 	data.SetNoticeTypeDisplayName()
 	data.SetEnabledStateDisplayName()
 	return
 }
 
 func (service *noticeStrategyEntity) GetNoticeStrategyList(filter map[string]interface{}) (total int64, data []*vo.NoticeStrategyGetInfoRes, err error) {
-	total, confList, err := service.noticeStrategyRepo.GetList(filter)
+	total, resList, err := service.noticeStrategyRepo.GetList(filter)
 	// 响应处理
 	data = make([]*vo.NoticeStrategyGetInfoRes, 0)
-	for _, confInfo := range confList {
+	for _, resInfo := range resList {
 		item := &vo.NoticeStrategyGetInfoRes{}
-		item.Id = confInfo.Id
-		item.NoticeType = confInfo.NoticeType
-		item.TriggerThreshold = confInfo.TriggerThreshold
-		item.EnabledState = confInfo.EnabledState
-		item.ToEmails = confInfo.ToEmails
+		item.Id = resInfo.Id
+		item.NoticeType = resInfo.NoticeType
+		item.TriggerThreshold = resInfo.TriggerThreshold
+		item.EnabledState = resInfo.EnabledState
+		item.ToEmails = resInfo.ToEmails
 		item.SetNoticeTypeDisplayName()
 		item.SetEnabledStateDisplayName()
 		data = append(data, item)

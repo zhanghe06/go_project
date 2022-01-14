@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go_project/adapter/driver"
 	"go_project/adapter/driver/cert"
+	"go_project/adapter/driver/event"
 	"go_project/adapter/driver/health"
 	"go_project/adapter/driver/notice_conf"
 	"go_project/adapter/driver/notice_strategy"
@@ -12,15 +13,18 @@ import (
 	"go_project/infra/config"
 	"go_project/infra/logs"
 	"go_project/infra/middleware"
-	//"log"
+	"time"
 )
 
 type server struct {
+	// Rest API
 	healthRestHandler         driver.RESTHandlerInterface
 	certRestHandler           driver.RESTHandlerInterface
 	noticeConfRestHandler     driver.RESTHandlerInterface
 	noticeStrategyRestHandler driver.RESTHandlerInterface
 	operationLogRestHandler   driver.RESTHandlerInterface
+	// 邮件通知
+	emailNotice event.NoticeInterface
 	// TODO
 }
 
@@ -55,6 +59,26 @@ func (s *server) Start() {
 		}
 		log.Infof("api server run in %s", url)
 	}()
+
+	// 过期提醒（扫描频次：每天一次）
+	go func() {
+		d := time.Duration(time.Hour * 24)
+		t := time.NewTicker(d)
+		defer t.Stop()
+
+		for {
+			<-t.C
+			// TODO 检查临期证书
+			log.Infoln("Scan cert timeout, start")
+			s.emailNotice.Scan()
+			log.Infoln("Scan cert timeout, end")
+			// TODO 临期邮件通知
+			log.Infoln("Send cert timeout, start")
+			s.emailNotice.Send()
+			log.Infoln("Send cert timeout, end")
+		}
+	}()
+
 }
 
 func main() {
@@ -64,6 +88,7 @@ func main() {
 		noticeConfRestHandler:     noticeConf.NewRESTHandler(),
 		noticeStrategyRestHandler: noticeStrategy.NewRESTHandler(),
 		operationLogRestHandler:   operationLog.NewRESTHandler(),
+		emailNotice:               event.NewEmailNotice(),
 	}
 	s.Start()
 
