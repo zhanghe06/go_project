@@ -14,7 +14,7 @@ type OperationLogEntityInterface interface {
 	DelOperationLog(id int, deletedBy string) (err error)
 	ModOperationLog(id int, data map[string]interface{}, updatedBy string) (err error)
 	GetOperationLogInfo(id int) (data *vo.OperationLogGetInfoRes, err error)
-	GetOperationLogList(filter map[string]interface{}) (total int64, data []*vo.OperationLogGetInfoRes, err error)
+	GetOperationLogList(filter map[string]interface{}, args ...interface{}) (total int64, data []*vo.OperationLogGetInfoRes, err error)
 }
 
 var (
@@ -39,10 +39,10 @@ func NewOperationLogEntity() OperationLogEntityInterface {
 
 func (service *operationLogEntity) AddOperationLog(data *vo.OperationLogCreateReq, createdBy string) (id int, err error) {
 	// 参数处理
-	confInfo := &model.OperationLog{}
-	//confInfo.Name = data.Name
-	//confInfo.Gender = *data.Gender
-	return service.operationLogRepo.Create(confInfo, createdBy)
+	logInfo := &model.OperationLog{}
+	//logInfo.Name = data.Name
+	//logInfo.Gender = *data.Gender
+	return service.operationLogRepo.Create(logInfo, createdBy)
 }
 
 func (service *operationLogEntity) ModOperationLog(id int, data map[string]interface{}, updatedBy string) (err error) {
@@ -54,25 +54,25 @@ func (service *operationLogEntity) DelOperationLog(id int, deletedBy string) (er
 }
 
 func (service *operationLogEntity) GetOperationLogInfo(id int) (data *vo.OperationLogGetInfoRes, err error) {
-	confInfo, err := service.operationLogRepo.GetInfo(id)
+	resInfo, err := service.operationLogRepo.GetInfo(id)
 	// 响应处理
 	data = &vo.OperationLogGetInfoRes{}
-	data.Id = confInfo.Id
-	//data.Name = confInfo.Name
-	//data.Gender = confInfo.Gender
+	data.Id = resInfo.Id
+	//data.Name = resInfo.Name
+	//data.Gender = resInfo.Gender
 	data.SetGenderDisplayName()
 	return
 }
 
-func (service *operationLogEntity) GetOperationLogList(filter map[string]interface{}) (total int64, data []*vo.OperationLogGetInfoRes, err error) {
-	total, confList, err := service.operationLogRepo.GetList(filter)
+func (service *operationLogEntity) GetOperationLogList(filter map[string]interface{}, args ...interface{}) (total int64, data []*vo.OperationLogGetInfoRes, err error) {
+	total, resList, err := service.operationLogRepo.GetList(filter, args...)
 	// 响应处理
 	data = make([]*vo.OperationLogGetInfoRes, 0)
-	for _, conf := range confList {
+	for _, resInfo := range resList {
 		item := &vo.OperationLogGetInfoRes{}
-		item.Id = conf.Id
-		//item.Name = conf.Name
-		//item.Gender = conf.Gender
+		item.Id = resInfo.Id
+		//item.Name = resInfo.Name
+		//item.Gender = resInfo.Gender
 		item.SetGenderDisplayName()
 		data = append(data, item)
 	}

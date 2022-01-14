@@ -14,7 +14,7 @@ type CertEntityInterface interface {
 	DelCert(id int, deletedBy string) (err error)
 	ModCert(id int, data map[string]interface{}, updatedBy string) (err error)
 	GetCertInfo(id int) (data *vo.CertGetInfoRes, err error)
-	GetCertList(filter map[string]interface{}) (total int64, data []*vo.CertGetInfoRes, err error)
+	GetCertList(filter map[string]interface{}, args ...interface{}) (total int64, data []*vo.CertGetInfoRes, err error)
 }
 
 var (
@@ -88,8 +88,8 @@ func (service *certEntity) GetCertInfo(id int) (data *vo.CertGetInfoRes, err err
 	return
 }
 
-func (service *certEntity) GetCertList(filter map[string]interface{}) (total int64, data []*vo.CertGetInfoRes, err error) {
-	total, certList, err := service.certRepo.GetList(filter)
+func (service *certEntity) GetCertList(filter map[string]interface{}, args ...interface{}) (total int64, data []*vo.CertGetInfoRes, err error) {
+	total, certList, err := service.certRepo.GetList(filter, args...)
 	// 响应处理
 	data = make([]*vo.CertGetInfoRes, 0)
 	for _, certInfo := range certList {

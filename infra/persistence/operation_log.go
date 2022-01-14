@@ -92,7 +92,7 @@ func (repo *OperationLogRepository) GetInfo(id int) (data *model.OperationLog, e
 	return
 }
 
-func (repo *OperationLogRepository) GetList(filter map[string]interface{}) (total int64, data []*model.OperationLog, err error) {
+func (repo *OperationLogRepository) GetList(filter map[string]interface{}, args ...interface{}) (total int64, data []*model.OperationLog, err error) {
 	// 条件处理
 	limit := 10
 	offset := 0
@@ -109,10 +109,15 @@ func (repo *OperationLogRepository) GetList(filter map[string]interface{}) (tota
 	condition["deleted_state"] = enums.NotDeleted
 
 	// 总记录数
-	userObj := repo.db.Model(&model.OperationLog{}).Where(condition)
-	userObj.Count(&total)
+	dbQuery := repo.db.Model(&model.OperationLog{}).Where(condition)
+	if len(args) >= 2 {
+		dbQuery = dbQuery.Where(args[0], args[1:]...)
+	} else if len(args) >= 1 {
+		dbQuery = dbQuery.Where(args[0])
+	}
+	dbQuery.Count(&total)
 
 	// 分页查询
-	err = userObj.Limit(limit).Offset(offset).Find(&data).Error
+	err = dbQuery.Limit(limit).Offset(offset).Find(&data).Error
 	return
 }

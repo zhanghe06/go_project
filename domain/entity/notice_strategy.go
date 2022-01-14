@@ -14,7 +14,7 @@ type NoticeStrategyEntityInterface interface {
 	DelNoticeStrategy(id int, deletedBy string) (err error)
 	ModNoticeStrategy(id int, data map[string]interface{}, updatedBy string) (err error)
 	GetNoticeStrategyInfo(id int) (data *vo.NoticeStrategyGetInfoRes, err error)
-	GetNoticeStrategyList(filter map[string]interface{}) (total int64, data []*vo.NoticeStrategyGetInfoRes, err error)
+	GetNoticeStrategyList(filter map[string]interface{}, args ...interface{}) (total int64, data []*vo.NoticeStrategyGetInfoRes, err error)
 }
 
 var (
@@ -70,8 +70,8 @@ func (service *noticeStrategyEntity) GetNoticeStrategyInfo(id int) (data *vo.Not
 	return
 }
 
-func (service *noticeStrategyEntity) GetNoticeStrategyList(filter map[string]interface{}) (total int64, data []*vo.NoticeStrategyGetInfoRes, err error) {
-	total, resList, err := service.noticeStrategyRepo.GetList(filter)
+func (service *noticeStrategyEntity) GetNoticeStrategyList(filter map[string]interface{}, args ...interface{}) (total int64, data []*vo.NoticeStrategyGetInfoRes, err error) {
+	total, resList, err := service.noticeStrategyRepo.GetList(filter, args...)
 	// 响应处理
 	data = make([]*vo.NoticeStrategyGetInfoRes, 0)
 	for _, resInfo := range resList {

@@ -10,5 +10,5 @@ type NoticeStrategyRepoInterface interface {
 	Update(id int, data map[string]interface{}, updatedBy string) (err error)
 	Delete(id int, deletedBy string) (err error)
 	GetInfo(id int) (data *model.NoticeStrategy, err error)
-	GetList(filter map[string]interface{}) (total int64, data []*model.NoticeStrategy, err error)
+	GetList(filter map[string]interface{}, args ...interface{}) (total int64, data []*model.NoticeStrategy, err error)
 }
