@@ -45,11 +45,17 @@ func NewEmailNotice() NoticeInterface {
 var _ NoticeInterface = &emailNotice{}
 
 func (ec *emailNotice) Scan() {
-	return
+	err := ec.emailNoticeEntity.Scan()
+	if err != nil {
+		ec.log.Errorln(err)
+	}
 }
 
 func (ec *emailNotice) Send() {
-
+	err := ec.emailNoticeEntity.Send()
+	if err != nil {
+		ec.log.Errorln(err)
+	}
 }
 
 // Send 邮件发送

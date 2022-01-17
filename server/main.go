@@ -68,11 +68,11 @@ func (s *server) Start() {
 
 		for {
 			<-t.C
-			// TODO 检查临期证书
+			// 检查临期证书
 			log.Infoln("Scan cert timeout, start")
 			s.emailNotice.Scan()
 			log.Infoln("Scan cert timeout, end")
-			// TODO 临期邮件通知
+			// 临期邮件通知
 			log.Infoln("Send cert timeout, start")
 			s.emailNotice.Send()
 			log.Infoln("Send cert timeout, end")

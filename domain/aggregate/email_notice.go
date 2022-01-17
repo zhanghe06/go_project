@@ -1,11 +1,18 @@
 package aggregate
 
 import (
+	"encoding/json"
+	"fmt"
 	"go_project/domain/enums"
 	"go_project/domain/repository"
+	"go_project/domain/vo"
 	"go_project/infra/logs"
+	"go_project/infra/model"
 	"go_project/infra/persistence"
+	"net/smtp"
+	"strings"
 	"sync"
+	"time"
 )
 
 //go:generate mockgen -source=./email_notice.go -destination ./mock/mock_email_notice.go -package mock
@@ -43,7 +50,6 @@ func NewEmailNoticeEntity() EmailNoticeEntityInterface {
 }
 
 func (service *emailNoticeEntity) Scan() (err error) {
-	// todo
 	// 获取所有启用的策略(NoticeType TriggerThreshold ToEmails)
 	filterStrategy := make(map[string]interface{})
 	filterStrategy["limit"] = 100
@@ -56,20 +62,106 @@ func (service *emailNoticeEntity) Scan() (err error) {
 	if len(strategyList) == 0 {
 		return
 	}
-	// 获取启用状态下所有临期的证书(NotAfter EnabledState)
-	//service.certRepo.GetList()
-	//filterCert
-	//service.certRepo.GetList()
-	// 保存通知事件，并设置状态为 waiting
+	now := time.Now()
+	for _, strategy := range strategyList {
+		// 获取启用状态下所有临期的证书(NotAfter EnabledState)
+		td, _ := time.ParseDuration(fmt.Sprintf("%dh", 24*strategy.TriggerThreshold))
+		noticeTime := now.Add(td)
+		filterCert := make(map[string]interface{})
+		filterCert["limit"] = 1
+		filterCert["enabled_state"] = enums.Enabled
+		filterCertArgs := make([]interface{}, 0)
+		filterCertArgs = append(filterCertArgs, "not_after <= ?")
+		filterCertArgs = append(filterCertArgs, noticeTime)
+		_, certList, _ := service.certRepo.GetList(filterCert, filterCertArgs...)
+		if len(certList) == 0 {
+			continue
+		}
+		certInfo := certList[0]
+		//notAfter := certInfo.NotAfter
+		// 跳过已经处理过的通知事件（去重，单个策略只成功推送一次）
+		filterEvent := make(map[string]interface{})
+		filterEvent["limit"] = 1000
+		filterEvent["cert_id"] = certInfo.Id
+		filterEvent["notice_strategy_id"] = strategy.Id
+		filterEventArgs := make([]interface{}, 0)
+		filterEventArgs = append(filterEventArgs, "event_state in ?")
+		filterEventArgs = append(filterEventArgs, []int{enums.EventStateWaiting, enums.EventStateProcess, enums.EventStateSuccess})
+		_, eventList, _ := service.noticeEventRepo.GetList(filterEvent, filterEventArgs...)
+		if len(eventList) > 0 {
+			continue
+		}
+		// 保存通知事件，并设置状态为 waiting
+		eventInfo := &model.NoticeEvent{}
+		eventInfo.CertId =  certInfo.Id
+		eventInfo.NoticeStrategyId = strategy.Id
+		eventInfo.EventState = enums.EventStateWaiting
+		_, err = service.noticeEventRepo.Create(eventInfo)
+	}
+
 	return
 }
 
 func (service *emailNoticeEntity) Send() (err error) {
-	// todo
 	// 获取邮件smtp配置，为空报错退出
+	noticeConf, err := service.noticeConfRepo.GetEmail()
+	if err != nil {
+		return
+	}
+	// 响应处理
+	noticeConfEmail := &vo.NoticeConfGetEmailRes{}
+	if noticeConf.ConfigData == "" {
+		return
+	}
+	err = json.Unmarshal([]byte(noticeConf.ConfigData), &noticeConfEmail)
 	// 获取所有通知事件(CertId NoticeStrategyId EventState)
-	// 获取关联证书信息(NotAfter)
-	// 获取关联策略信息(NoticeType TriggerThreshold ToEmails)
-	// 拼装邮件信息，发送通知邮件
+	filterEvent := make(map[string]interface{})
+	filterEvent["limit"] = 1000
+	filterEvent["event_state"] = enums.EventStateWaiting
+	_, eventList, err := service.noticeEventRepo.GetList(filterEvent)
+	if err != nil {
+		return
+	}
+	for _, eventInfo := range eventList {
+		// 获取关联证书信息(NotAfter)
+		certInfo, err := service.certRepo.GetInfo(eventInfo.CertId)
+		if err != nil {
+			continue
+		}
+		// 获取关联策略信息(NoticeType TriggerThreshold ToEmails)
+		strategyInfo, err := service.noticeStrategyRepo.GetInfo(eventInfo.NoticeStrategyId)
+		if err != nil {
+			continue
+		}
+		// 拼装邮件信息，发送通知邮件
+		err = service.SendEmail(
+			noticeConfEmail,
+			strategyInfo.ToEmails,
+			"证书过期提醒",
+			fmt.Sprintf("证书：%s，即将在：%s过期，请联系SAP管理员更新证书", certInfo.AuthId, certInfo.NotAfter),
+			)
+	}
 	return
+}
+
+
+func (service *emailNoticeEntity) SendEmail(ec *vo.NoticeConfGetEmailRes, receivers, subject, body string) (err error) {
+	auth := smtp.PlainAuth("", ec.FromEmail, ec.FromPasswd, ec.ServerHost)
+	contentType := "Content-Type: text/html; charset=UTF-8"
+	sendFrom := ec.FromEmail
+	if ec.FromName != "" {
+		sendFrom = ec.FromName + "<" + ec.FromEmail + ">"
+	}
+	var data []string
+	data = append(data, "From: "+sendFrom)
+	data = append(data, "To: "+receivers)
+	data = append(data, "Subject: "+subject)
+	data = append(data, contentType)
+	data = append(data, "")
+	data = append(data, body)
+	msg := []byte(strings.Join(data, "\r\n"))
+	sendTo := strings.Split(receivers, ",")
+	serverAddress := strings.Join([]string{ec.ServerHost, ec.ServerPort}, ":")
+	err = smtp.SendMail(serverAddress, auth, ec.FromEmail, sendTo, msg)
+	return err
 }

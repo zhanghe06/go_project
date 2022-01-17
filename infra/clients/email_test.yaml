@@ -1,6 +1,0 @@
-email_notice:
-  server_host: "smtp.163.com"
-  server_port: "25"
-  from_name: "no-reply"
-  from_email: "xxxxxx@163.com"
-  from_passwd: "xxxxxx"
