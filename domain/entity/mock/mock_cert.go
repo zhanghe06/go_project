@@ -5,8 +5,8 @@
 package mock
 
 import (
-	vo "go_project/domain/vo"
 	reflect "reflect"
+	vo "sap_cert_mgt/domain/vo"
 
 	gomock "github.com/golang/mock/gomock"
 )
@@ -79,9 +79,13 @@ func (mr *MockCertEntityInterfaceMockRecorder) GetCertInfo(id interface{}) *gomo
 }
 
 // GetCertList mocks base method.
-func (m *MockCertEntityInterface) GetCertList(filter map[string]interface{}) (int64, []*vo.CertGetInfoRes, error) {
+func (m *MockCertEntityInterface) GetCertList(filter map[string]interface{}, args ...interface{}) (int64, []*vo.CertGetInfoRes, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetCertList", filter)
+	varargs := []interface{}{filter}
+	for _, a := range args {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetCertList", varargs...)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].([]*vo.CertGetInfoRes)
 	ret2, _ := ret[2].(error)
@@ -89,21 +93,8 @@ func (m *MockCertEntityInterface) GetCertList(filter map[string]interface{}) (in
 }
 
 // GetCertList indicates an expected call of GetCertList.
-func (mr *MockCertEntityInterfaceMockRecorder) GetCertList(filter interface{}) *gomock.Call {
+func (mr *MockCertEntityInterfaceMockRecorder) GetCertList(filter interface{}, args ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCertList", reflect.TypeOf((*MockCertEntityInterface)(nil).GetCertList), filter)
-}
-
-// ModCert mocks base method.
-func (m *MockCertEntityInterface) ModCert(id int, data map[string]interface{}, updatedBy string) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ModCert", id, data, updatedBy)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// ModCert indicates an expected call of ModCert.
-func (mr *MockCertEntityInterfaceMockRecorder) ModCert(id, data, updatedBy interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModCert", reflect.TypeOf((*MockCertEntityInterface)(nil).ModCert), id, data, updatedBy)
+	varargs := append([]interface{}{filter}, args...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCertList", reflect.TypeOf((*MockCertEntityInterface)(nil).GetCertList), varargs...)
 }

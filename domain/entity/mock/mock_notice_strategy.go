@@ -5,8 +5,8 @@
 package mock
 
 import (
-	vo "go_project/domain/vo"
 	reflect "reflect"
+	vo "sap_cert_mgt/domain/vo"
 
 	gomock "github.com/golang/mock/gomock"
 )
@@ -79,9 +79,13 @@ func (mr *MockNoticeStrategyEntityInterfaceMockRecorder) GetNoticeStrategyInfo(i
 }
 
 // GetNoticeStrategyList mocks base method.
-func (m *MockNoticeStrategyEntityInterface) GetNoticeStrategyList(filter map[string]interface{}) (int64, []*vo.NoticeStrategyGetInfoRes, error) {
+func (m *MockNoticeStrategyEntityInterface) GetNoticeStrategyList(filter map[string]interface{}, args ...interface{}) (int64, []*vo.NoticeStrategyGetInfoRes, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetNoticeStrategyList", filter)
+	varargs := []interface{}{filter}
+	for _, a := range args {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetNoticeStrategyList", varargs...)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].([]*vo.NoticeStrategyGetInfoRes)
 	ret2, _ := ret[2].(error)
@@ -89,9 +93,10 @@ func (m *MockNoticeStrategyEntityInterface) GetNoticeStrategyList(filter map[str
 }
 
 // GetNoticeStrategyList indicates an expected call of GetNoticeStrategyList.
-func (mr *MockNoticeStrategyEntityInterfaceMockRecorder) GetNoticeStrategyList(filter interface{}) *gomock.Call {
+func (mr *MockNoticeStrategyEntityInterfaceMockRecorder) GetNoticeStrategyList(filter interface{}, args ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNoticeStrategyList", reflect.TypeOf((*MockNoticeStrategyEntityInterface)(nil).GetNoticeStrategyList), filter)
+	varargs := append([]interface{}{filter}, args...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNoticeStrategyList", reflect.TypeOf((*MockNoticeStrategyEntityInterface)(nil).GetNoticeStrategyList), varargs...)
 }
 
 // ModNoticeStrategy mocks base method.

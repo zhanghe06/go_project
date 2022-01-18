@@ -4,8 +4,8 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/magiconair/properties/assert"
 	. "github.com/smartystreets/goconvey/convey"
-	. "go_project/domain/repository/mock"
-	"go_project/domain/vo"
+	. "sap_cert_mgt/domain/repository/mock"
+	"sap_cert_mgt/domain/vo"
 	"testing"
 	"time"
 )
@@ -15,10 +15,12 @@ func TestCertEntity(t *testing.T) {
 	ctrl := gomock.NewController(t) // 初始化 controller
 	defer ctrl.Finish()
 
-	certRepo := NewMockCertRepoInterface(ctrl) // 初始化 mock
+	certRepo := NewMockCertRepoInterface(ctrl)          // 初始化 mock
+	opLogRepo := NewMockOperationLogRepoInterface(ctrl) // 初始化 mock
 
 	certInst := certEntity{
-		certRepo: certRepo,
+		certRepo:  certRepo,
+		opLogRepo: opLogRepo,
 	}
 
 	Convey("Convey Test Add Cert Entity", t, func() {
@@ -52,10 +54,25 @@ func TestCertEntity(t *testing.T) {
 			id := 1
 			certRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(id, err)
 			certRepo.EXPECT().Enable(id, createdBy).Return(err)
+			opLogRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(id, err)
 			idRes, errRes := certInst.AddCert(data, createdBy)
 			assert.Equal(t, idRes, id)
 			assert.Equal(t, errRes, err)
 		})
 	})
 
+	Convey("Convey Test Del Cert Entity", t, func() {
+		var err error
+		var deletedBy string
+
+		Convey("Del Cert Success", func() {
+			err = nil
+			deletedBy = ""
+			id := 1
+			certRepo.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(err)
+			opLogRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(id, err)
+			errRes := certInst.DelCert(id, deletedBy)
+			assert.Equal(t, errRes, err)
+		})
+	})
 }

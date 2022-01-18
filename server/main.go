@@ -3,16 +3,16 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"go_project/adapter/driver"
-	"go_project/adapter/driver/cert"
-	"go_project/adapter/driver/event"
-	"go_project/adapter/driver/health"
-	"go_project/adapter/driver/notice_conf"
-	"go_project/adapter/driver/notice_strategy"
-	"go_project/adapter/driver/operation_log"
-	"go_project/infra/config"
-	"go_project/infra/logs"
-	"go_project/infra/middleware"
+	"sap_cert_mgt/adapter/driver"
+	"sap_cert_mgt/adapter/driver/cert"
+	"sap_cert_mgt/adapter/driver/event"
+	"sap_cert_mgt/adapter/driver/health"
+	"sap_cert_mgt/adapter/driver/notice_conf"
+	"sap_cert_mgt/adapter/driver/notice_strategy"
+	"sap_cert_mgt/adapter/driver/operation_log"
+	"sap_cert_mgt/infra/config"
+	"sap_cert_mgt/infra/logs"
+	"sap_cert_mgt/infra/middleware"
 	"time"
 )
 
@@ -52,7 +52,7 @@ func (s *server) Start() {
 		url := fmt.Sprintf(
 			"%s:%s",
 			conf.Service.Host,
-			conf.Service.Port,
+			conf.Service.PublicPort,
 		)
 		if err := engine.Run(url); err != nil {
 			log.Errorln(err)

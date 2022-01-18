@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"go_project/infra/model"
+	"sap_cert_mgt/infra/model"
 )
 
 //go:generate mockgen -source=./notice_strategy.go -destination ./mock/mock_notice_strategy.go -package mock

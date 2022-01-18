@@ -5,9 +5,9 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/magiconair/properties/assert"
 	. "github.com/smartystreets/goconvey/convey"
-	. "go_project/domain/repository/mock"
-	"go_project/domain/vo"
-	"go_project/infra/model"
+	. "sap_cert_mgt/domain/repository/mock"
+	"sap_cert_mgt/domain/vo"
+	"sap_cert_mgt/infra/model"
 	"testing"
 )
 
@@ -17,9 +17,11 @@ func TestNoticeConfEntity(t *testing.T) {
 	defer ctrl.Finish()
 
 	noticeConfRepo := NewMockNoticeConfRepoInterface(ctrl) // 初始化 mock
+	opLogRepo := NewMockOperationLogRepoInterface(ctrl)    // 初始化 mock
 
 	noticeConfInst := noticeConfEntity{
 		noticeConfRepo: noticeConfRepo,
+		opLogRepo:      opLogRepo,
 	}
 
 	Convey("Convey Test Notice Conf Get Email Entity", t, func() {
@@ -53,6 +55,7 @@ func TestNoticeConfEntity(t *testing.T) {
 			updatedBy = ""
 
 			noticeConfRepo.EXPECT().ModEmail(gomock.Any(), gomock.Any()).Return(err)
+			opLogRepo.EXPECT().Create(gomock.Any(), gomock.Any()).AnyTimes().Return(1, err)
 			errRes := noticeConfInst.ModNoticeConfEmail(data, updatedBy)
 			assert.Equal(t, errRes, err)
 		})
@@ -67,6 +70,7 @@ func TestNoticeConfEntity(t *testing.T) {
 			updatedBy = ""
 
 			noticeConfRepo.EXPECT().ModEmail(gomock.Any(), gomock.Any()).Return(err)
+			opLogRepo.EXPECT().Create(gomock.Any(), gomock.Any()).AnyTimes().Return(1, err)
 			errRes := noticeConfInst.ModNoticeConfEmail(data, updatedBy)
 			assert.Equal(t, errRes, err)
 		})

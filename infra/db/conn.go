@@ -3,10 +3,10 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"go_project/infra/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"sap_cert_mgt/infra/config"
 	"strings"
 	"sync"
 	"time"

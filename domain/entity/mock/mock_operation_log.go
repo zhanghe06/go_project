@@ -5,8 +5,8 @@
 package mock
 
 import (
-	vo "go_project/domain/vo"
 	reflect "reflect"
+	vo "sap_cert_mgt/domain/vo"
 
 	gomock "github.com/golang/mock/gomock"
 )
@@ -79,9 +79,13 @@ func (mr *MockOperationLogEntityInterfaceMockRecorder) GetOperationLogInfo(id in
 }
 
 // GetOperationLogList mocks base method.
-func (m *MockOperationLogEntityInterface) GetOperationLogList(filter map[string]interface{}) (int64, []*vo.OperationLogGetInfoRes, error) {
+func (m *MockOperationLogEntityInterface) GetOperationLogList(filter map[string]interface{}, args ...interface{}) (int64, []*vo.OperationLogGetInfoRes, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOperationLogList", filter)
+	varargs := []interface{}{filter}
+	for _, a := range args {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetOperationLogList", varargs...)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].([]*vo.OperationLogGetInfoRes)
 	ret2, _ := ret[2].(error)
@@ -89,21 +93,8 @@ func (m *MockOperationLogEntityInterface) GetOperationLogList(filter map[string]
 }
 
 // GetOperationLogList indicates an expected call of GetOperationLogList.
-func (mr *MockOperationLogEntityInterfaceMockRecorder) GetOperationLogList(filter interface{}) *gomock.Call {
+func (mr *MockOperationLogEntityInterfaceMockRecorder) GetOperationLogList(filter interface{}, args ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOperationLogList", reflect.TypeOf((*MockOperationLogEntityInterface)(nil).GetOperationLogList), filter)
-}
-
-// ModOperationLog mocks base method.
-func (m *MockOperationLogEntityInterface) ModOperationLog(id int, data map[string]interface{}, updatedBy string) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ModOperationLog", id, data, updatedBy)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// ModOperationLog indicates an expected call of ModOperationLog.
-func (mr *MockOperationLogEntityInterfaceMockRecorder) ModOperationLog(id, data, updatedBy interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModOperationLog", reflect.TypeOf((*MockOperationLogEntityInterface)(nil).ModOperationLog), id, data, updatedBy)
+	varargs := append([]interface{}{filter}, args...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOperationLogList", reflect.TypeOf((*MockOperationLogEntityInterface)(nil).GetOperationLogList), varargs...)
 }

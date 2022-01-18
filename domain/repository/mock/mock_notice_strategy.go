@@ -5,8 +5,8 @@
 package mock
 
 import (
-	model "go_project/infra/model"
 	reflect "reflect"
+	model "sap_cert_mgt/infra/model"
 
 	gomock "github.com/golang/mock/gomock"
 )
@@ -79,9 +79,13 @@ func (mr *MockNoticeStrategyRepoInterfaceMockRecorder) GetInfo(id interface{}) *
 }
 
 // GetList mocks base method.
-func (m *MockNoticeStrategyRepoInterface) GetList(filter map[string]interface{}) (int64, []*model.NoticeStrategy, error) {
+func (m *MockNoticeStrategyRepoInterface) GetList(filter map[string]interface{}, args ...interface{}) (int64, []*model.NoticeStrategy, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetList", filter)
+	varargs := []interface{}{filter}
+	for _, a := range args {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetList", varargs...)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].([]*model.NoticeStrategy)
 	ret2, _ := ret[2].(error)
@@ -89,9 +93,10 @@ func (m *MockNoticeStrategyRepoInterface) GetList(filter map[string]interface{})
 }
 
 // GetList indicates an expected call of GetList.
-func (mr *MockNoticeStrategyRepoInterfaceMockRecorder) GetList(filter interface{}) *gomock.Call {
+func (mr *MockNoticeStrategyRepoInterfaceMockRecorder) GetList(filter interface{}, args ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetList", reflect.TypeOf((*MockNoticeStrategyRepoInterface)(nil).GetList), filter)
+	varargs := append([]interface{}{filter}, args...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetList", reflect.TypeOf((*MockNoticeStrategyRepoInterface)(nil).GetList), varargs...)
 }
 
 // Update mocks base method.

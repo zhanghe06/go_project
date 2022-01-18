@@ -2,7 +2,7 @@ package requests
 
 import (
 	"github.com/gin-gonic/gin"
-	"go_project/infra/errors"
+	"sap_cert_mgt/infra/errors"
 	"strings"
 )
 
@@ -20,7 +20,7 @@ func TokenAuthorization(c *gin.Context) (userInfo *UserInfo, err error) {
 	token := strings.TrimPrefix(tokenID, "Bearer ")
 	if token == "" {
 		err = &errors.ApiError{
-			ErrCode: errors.ErrCodeUnauthorized,
+			ErrCode: errors.ErrCodeNotAuthorized,
 			ErrMsg:  errors.ErrMsgUnauthorized,
 		}
 		//_ = c.AbortWithError(http.StatusUnauthorized, err)

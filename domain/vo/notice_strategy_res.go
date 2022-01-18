@@ -1,7 +1,7 @@
 package vo
 
 import (
-	"go_project/domain/enums"
+	"sap_cert_mgt/domain/enums"
 )
 
 // NoticeStrategyCreateRes .

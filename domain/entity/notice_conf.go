@@ -2,9 +2,10 @@ package entity
 
 import (
 	"encoding/json"
-	"go_project/domain/repository"
-	"go_project/domain/vo"
-	"go_project/infra/persistence"
+	"sap_cert_mgt/domain/repository"
+	"sap_cert_mgt/domain/vo"
+	"sap_cert_mgt/infra/model"
+	"sap_cert_mgt/infra/persistence"
 	"sync"
 )
 
@@ -20,7 +21,8 @@ var (
 )
 
 type noticeConfEntity struct {
-	noticeConfRepo repository.NoticeConfRepoInterface // 依赖抽象
+	noticeConfRepo repository.NoticeConfRepoInterface   // 依赖抽象
+	opLogRepo      repository.OperationLogRepoInterface // 依赖抽象
 }
 
 var _ NoticeConfEntityInterface = &noticeConfEntity{}
@@ -29,6 +31,7 @@ func NewNoticeConfEntity() NoticeConfEntityInterface {
 	noticeConfServiceOnce.Do(func() {
 		noticeConfService = &noticeConfEntity{
 			noticeConfRepo: persistence.NewNoticeConfRepo(),
+			opLogRepo:      persistence.NewOperationLogRepo(),
 		}
 	})
 	return noticeConfService
@@ -46,5 +49,18 @@ func (service *noticeConfEntity) GetNoticeConfEmail() (data *vo.NoticeConfGetEma
 }
 
 func (service *noticeConfEntity) ModNoticeConfEmail(data map[string]interface{}, updatedBy string) (err error) {
-	return service.noticeConfRepo.ModEmail(data, updatedBy)
+	err = service.noticeConfRepo.ModEmail(data, updatedBy)
+	if err != nil {
+		return
+	}
+	// 操作日志
+	opLogData := &model.OperationLog{
+		OpType:   "update",
+		RsType:   "notice_conf",
+		RsId:     0,
+		OpDetail: "update email notice conf ",
+		OpError:  "",
+	}
+	_, err = service.opLogRepo.Create(opLogData, updatedBy)
+	return
 }

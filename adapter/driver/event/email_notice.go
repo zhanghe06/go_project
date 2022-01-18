@@ -1,8 +1,8 @@
 package event
 
 import (
-	"go_project/domain/aggregate"
-	"go_project/infra/logs"
+	"sap_cert_mgt/domain/aggregate"
+	"sap_cert_mgt/infra/logs"
 	"sync"
 )
 

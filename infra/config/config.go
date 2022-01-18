@@ -2,21 +2,19 @@ package config
 
 import (
 	"fmt"
-	"go_project/infra/utils"
 	"io/ioutil"
 	"path"
+	"sap_cert_mgt/infra/utils"
 	"sync"
 
 	"gopkg.in/yaml.v2"
 )
 
 type ServiceConf struct {
-	Debug string `yaml:"debug"`
-	Lang  string `yaml:"lang"`
-	Name  string `yaml:"name"`
-	Ver   string `yaml:"ver"`
-	Host  string `yaml:"host"`
-	Port  string `yaml:"port"`
+	Lang        string `yaml:"lang"`
+	Host        string `yaml:"host"`
+	PublicPort  string `yaml:"public_port"`
+	PrivatePort string `yaml:"private_port"`
 }
 
 type MysqlConf struct {
@@ -55,6 +53,7 @@ func NewConfig() *Config {
 	configOnce.Do(func() {
 		projectPath := path.Dir(utils.GetProjectAbPathByCaller())
 		configFilePath := path.Join(projectPath, "server", "config", "config.yaml")
+		//configFilePath := "/sysvol/conf/sap-cert-mgt.yaml"
 		file, err := ioutil.ReadFile(configFilePath)
 		if err != nil {
 			panic(fmt.Sprintf("load %v failed: %v", configFilePath, err))

@@ -3,12 +3,12 @@ package aggregate
 import (
 	"encoding/json"
 	"fmt"
-	"go_project/domain/enums"
-	"go_project/domain/repository"
-	"go_project/domain/vo"
-	"go_project/infra/logs"
-	"go_project/infra/model"
-	"go_project/infra/persistence"
+	"sap_cert_mgt/domain/enums"
+	"sap_cert_mgt/domain/repository"
+	"sap_cert_mgt/domain/vo"
+	"sap_cert_mgt/infra/logs"
+	"sap_cert_mgt/infra/model"
+	"sap_cert_mgt/infra/persistence"
 	"net/smtp"
 	"strings"
 	"sync"
@@ -27,11 +27,11 @@ var (
 )
 
 type emailNoticeEntity struct {
-	certRepo repository.CertRepoInterface // 依赖抽象
+	certRepo           repository.CertRepoInterface           // 依赖抽象
 	noticeStrategyRepo repository.NoticeStrategyRepoInterface // 依赖抽象
-	noticeConfRepo repository.NoticeConfRepoInterface // 依赖抽象
-	noticeEventRepo repository.NoticeEventRepoInterface // 依赖抽象
-	log logs.Logger
+	noticeConfRepo     repository.NoticeConfRepoInterface     // 依赖抽象
+	noticeEventRepo    repository.NoticeEventRepoInterface    // 依赖抽象
+	log                logs.Logger
 }
 
 var _ EmailNoticeEntityInterface = &emailNoticeEntity{}
@@ -39,11 +39,11 @@ var _ EmailNoticeEntityInterface = &emailNoticeEntity{}
 func NewEmailNoticeEntity() EmailNoticeEntityInterface {
 	emailNoticeServiceOnce.Do(func() {
 		emailNoticeService = &emailNoticeEntity{
-			certRepo: persistence.NewCertRepo(),
+			certRepo:           persistence.NewCertRepo(),
 			noticeStrategyRepo: persistence.NewNoticeStrategyRepo(),
-			noticeConfRepo: persistence.NewNoticeConfRepo(),
-			noticeEventRepo: persistence.NewNoticeEventRepo(),
-			log: logs.NewLogger(),
+			noticeConfRepo:     persistence.NewNoticeConfRepo(),
+			noticeEventRepo:    persistence.NewNoticeEventRepo(),
+			log:                logs.NewLogger(),
 		}
 	})
 	return emailNoticeService
@@ -93,7 +93,7 @@ func (service *emailNoticeEntity) Scan() (err error) {
 		}
 		// 保存通知事件，并设置状态为 waiting
 		eventInfo := &model.NoticeEvent{}
-		eventInfo.CertId =  certInfo.Id
+		eventInfo.CertId = certInfo.Id
 		eventInfo.NoticeStrategyId = strategy.Id
 		eventInfo.EventState = enums.EventStateWaiting
 		_, err = service.noticeEventRepo.Create(eventInfo)
@@ -114,6 +114,9 @@ func (service *emailNoticeEntity) Send() (err error) {
 		return
 	}
 	err = json.Unmarshal([]byte(noticeConf.ConfigData), &noticeConfEmail)
+	if err != nil {
+		return
+	}
 	// 获取所有通知事件(CertId NoticeStrategyId EventState)
 	filterEvent := make(map[string]interface{})
 	filterEvent["limit"] = 1000
@@ -139,11 +142,20 @@ func (service *emailNoticeEntity) Send() (err error) {
 			strategyInfo.ToEmails,
 			"证书过期提醒",
 			fmt.Sprintf("证书：%s，即将在：%s过期，请联系SAP管理员更新证书", certInfo.AuthId, certInfo.NotAfter),
-			)
+		)
+		eventData := make(map[string]interface{})
+		if err != nil {
+			service.log.Errorln("send email failure")
+			eventData["event_tate"] = enums.EventStateFailure
+			_ = service.noticeEventRepo.Update(eventInfo.Id, eventData)
+		} else {
+			service.log.Infoln("send email success")
+			eventData["event_tate"] = enums.EventStateSuccess
+			_ = service.noticeEventRepo.Update(eventInfo.Id, eventData)
+		}
 	}
 	return
 }
-
 
 func (service *emailNoticeEntity) SendEmail(ec *vo.NoticeConfGetEmailRes, receivers, subject, body string) (err error) {
 	auth := smtp.PlainAuth("", ec.FromEmail, ec.FromPasswd, ec.ServerHost)
@@ -163,5 +175,5 @@ func (service *emailNoticeEntity) SendEmail(ec *vo.NoticeConfGetEmailRes, receiv
 	sendTo := strings.Split(receivers, ",")
 	serverAddress := strings.Join([]string{ec.ServerHost, ec.ServerPort}, ":")
 	err = smtp.SendMail(serverAddress, auth, ec.FromEmail, sendTo, msg)
-	return err
+	return
 }

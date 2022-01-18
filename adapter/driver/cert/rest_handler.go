@@ -4,13 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"go_project/adapter/driver"
-	"go_project/domain/entity"
-	"go_project/domain/vo"
-	"go_project/infra/errors"
-	"go_project/infra/logs"
-	"go_project/infra/requests"
-	"go_project/infra/responses"
+	"sap_cert_mgt/adapter/driver"
+	"sap_cert_mgt/domain/entity"
+	"sap_cert_mgt/domain/vo"
+	"sap_cert_mgt/infra/errors"
+	"sap_cert_mgt/infra/logs"
+	"sap_cert_mgt/infra/requests"
+	"sap_cert_mgt/infra/responses"
 	"net/http"
 	"sync"
 )
@@ -41,7 +41,6 @@ func (h *restHandler) RegisterAPI(engine *gin.Engine) {
 	engine.GET("/cert", h.getListHandler)
 	engine.POST("/cert", h.createHandler)
 	engine.GET("/cert/:id", h.getInfoHandler)
-	//engine.PUT("/cert/:id", h.updateHandler)
 	engine.DELETE("/cert/:id", h.deleteHandler)
 }
 
@@ -134,47 +133,6 @@ func (h *restHandler) createHandler(c *gin.Context) {
 		"id":  id,
 	})
 }
-
-
-func (h *restHandler) updateHandler(c *gin.Context) {
-	// 异常捕获
-	defer responses.ApiRecover(c)
-
-	// 请求处理
-	var uriReq requests.IDUriReq
-	if err := c.ShouldBindUri(&uriReq); err != nil {
-		_ = c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
-	var certUpdateReq vo.CertUpdateReq
-	if err := c.ShouldBindJSON(&certUpdateReq); err != nil {
-		_ = c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
-	// 参数转换
-	var data map[string]interface{}
-	reqBytes, err := json.Marshal(certUpdateReq)
-	if err != nil {
-		_ = c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-	err = json.Unmarshal(reqBytes, &data)
-	if err != nil {
-		_ = c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
-	// 逻辑处理
-	err = h.certEntity.ModCert(uriReq.ID, data, "SAP")
-	if err != nil {
-		_ = c.AbortWithError(http.StatusNotFound, err)
-		return
-	}
-	c.Status(http.StatusNoContent)
-}
-
 
 func (h *restHandler) deleteHandler(c *gin.Context) {
 	// 异常捕获

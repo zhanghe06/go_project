@@ -5,8 +5,8 @@
 package mock
 
 import (
-	model "go_project/infra/model"
 	reflect "reflect"
+	model "sap_cert_mgt/infra/model"
 
 	gomock "github.com/golang/mock/gomock"
 )

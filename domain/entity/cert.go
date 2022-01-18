@@ -1,10 +1,10 @@
 package entity
 
 import (
-	"go_project/domain/repository"
-	"go_project/domain/vo"
-	"go_project/infra/model"
-	"go_project/infra/persistence"
+	"sap_cert_mgt/domain/repository"
+	"sap_cert_mgt/domain/vo"
+	"sap_cert_mgt/infra/model"
+	"sap_cert_mgt/infra/persistence"
 	"sync"
 )
 
@@ -12,7 +12,6 @@ import (
 type CertEntityInterface interface {
 	AddCert(data *vo.CertCreateReq, createdBy string) (id int, err error)
 	DelCert(id int, deletedBy string) (err error)
-	ModCert(id int, data map[string]interface{}, updatedBy string) (err error)
 	GetCertInfo(id int) (data *vo.CertGetInfoRes, err error)
 	GetCertList(filter map[string]interface{}, args ...interface{}) (total int64, data []*vo.CertGetInfoRes, err error)
 }
@@ -23,7 +22,8 @@ var (
 )
 
 type certEntity struct {
-	certRepo repository.CertRepoInterface // 依赖抽象
+	certRepo  repository.CertRepoInterface         // 依赖抽象
+	opLogRepo repository.OperationLogRepoInterface // 依赖抽象
 }
 
 var _ CertEntityInterface = &certEntity{}
@@ -31,7 +31,8 @@ var _ CertEntityInterface = &certEntity{}
 func NewCertEntity() CertEntityInterface {
 	certServiceOnce.Do(func() {
 		certService = &certEntity{
-			certRepo: persistence.NewCertRepo(),
+			certRepo:  persistence.NewCertRepo(),
+			opLogRepo: persistence.NewOperationLogRepo(),
 		}
 	})
 	return certService
@@ -57,15 +58,36 @@ func (service *certEntity) AddCert(data *vo.CertCreateReq, createdBy string) (id
 	}
 	// 启用证书
 	err = service.certRepo.Enable(id, createdBy)
+	if err != nil {
+		return
+	}
+	// 操作日志
+	opLogData := &model.OperationLog{
+		OpType:   "create",
+		RsType:   "cert",
+		RsId:     id,
+		OpDetail: "",
+		OpError:  "",
+	}
+	_, err = service.opLogRepo.Create(opLogData, createdBy)
 	return
 }
 
-func (service *certEntity) ModCert(id int, data map[string]interface{}, updatedBy string) (err error) {
-	return service.certRepo.Update(id, data, updatedBy)
-}
-
 func (service *certEntity) DelCert(id int, deletedBy string) (err error) {
-	return service.certRepo.Delete(id, deletedBy)
+	err = service.certRepo.Delete(id, deletedBy)
+	if err != nil {
+		return
+	}
+	// 操作日志
+	opLogData := &model.OperationLog{
+		OpType:   "delete",
+		RsType:   "cert",
+		RsId:     id,
+		OpDetail: "",
+		OpError:  "",
+	}
+	_, err = service.opLogRepo.Create(opLogData, deletedBy)
+	return
 }
 
 func (service *certEntity) GetCertInfo(id int) (data *vo.CertGetInfoRes, err error) {

@@ -1,25 +1,18 @@
 package vo
 
-import (
-	"go_project/domain/enums"
-)
-
 // OperationLogCreateRes .
 type OperationLogCreateRes struct {
-	Id int // 用户id
+	Id int // 日志id
 }
 
 // OperationLogGetInfoRes .
 type OperationLogGetInfoRes struct {
-	Id                int    `json:"id"`                  // 用户id
-	Name              string `json:"name"`                // 名称
-	Gender            int    `json:"gender"`              // 性别
-	EnabledState      int    `json:"enabled_state"`       // 启用状态
-	GenderDisplayName string `json:"gender_display_name"` // 性别（显示名称）
-}
-
-func (res *OperationLogGetInfoRes) SetGenderDisplayName() {
-	res.GenderDisplayName = enums.GenderType(res.Gender).DisplayName()
+	Id       int    `json:"id"`        // 日志id
+	OpType   string `json:"op_type"`   // 操作类型（create:创建、update:更新、delete:删除）
+	RsType   string `json:"rs_type"`   // 资源类型（cert、）
+	RsId     int    `json:"rs_id"`     // 资源ID
+	OpDetail string `json:"op_detail"` // 操作详情
+	OpError  string `json:"op_error"`  // 内容存储库
 }
 
 // OperationLogGetListRes .

@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"go_project/infra/errors"
+	"sap_cert_mgt/infra/errors"
 )
 
 func RecoveryMiddleware() gin.HandlerFunc {

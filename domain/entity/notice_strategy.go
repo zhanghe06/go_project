@@ -1,10 +1,10 @@
 package entity
 
 import (
-	"go_project/domain/repository"
-	"go_project/domain/vo"
-	"go_project/infra/model"
-	"go_project/infra/persistence"
+	"sap_cert_mgt/domain/repository"
+	"sap_cert_mgt/domain/vo"
+	"sap_cert_mgt/infra/model"
+	"sap_cert_mgt/infra/persistence"
 	"sync"
 )
 
@@ -24,6 +24,7 @@ var (
 
 type noticeStrategyEntity struct {
 	noticeStrategyRepo repository.NoticeStrategyRepoInterface // 依赖抽象
+	opLogRepo          repository.OperationLogRepoInterface   // 依赖抽象
 }
 
 var _ NoticeStrategyEntityInterface = &noticeStrategyEntity{}
@@ -32,6 +33,7 @@ func NewNoticeStrategyEntity() NoticeStrategyEntityInterface {
 	noticeStrategyServiceOnce.Do(func() {
 		noticeStrategyService = &noticeStrategyEntity{
 			noticeStrategyRepo: persistence.NewNoticeStrategyRepo(),
+			opLogRepo:          persistence.NewOperationLogRepo(),
 		}
 	})
 	return noticeStrategyService
@@ -45,15 +47,54 @@ func (service *noticeStrategyEntity) AddNoticeStrategy(data *vo.NoticeStrategyCr
 	confInfo.ToEmails = data.ToEmails
 	confInfo.EnabledState = *data.EnabledState
 
-	return service.noticeStrategyRepo.Create(confInfo, createdBy)
+	id, err = service.noticeStrategyRepo.Create(confInfo, createdBy)
+	if err != nil {
+		return
+	}
+	// 操作日志
+	opLogData := &model.OperationLog{
+		OpType:   "create",
+		RsType:   "notice_strategy",
+		RsId:     id,
+		OpDetail: "",
+		OpError:  "",
+	}
+	_, err = service.opLogRepo.Create(opLogData, createdBy)
+	return
 }
 
 func (service *noticeStrategyEntity) ModNoticeStrategy(id int, data map[string]interface{}, updatedBy string) (err error) {
-	return service.noticeStrategyRepo.Update(id, data, updatedBy)
+	err = service.noticeStrategyRepo.Update(id, data, updatedBy)
+	if err != nil {
+		return
+	}
+	// 操作日志
+	opLogData := &model.OperationLog{
+		OpType:   "update",
+		RsType:   "notice_strategy",
+		RsId:     id,
+		OpDetail: "",
+		OpError:  "",
+	}
+	_, err = service.opLogRepo.Create(opLogData, updatedBy)
+	return
 }
 
 func (service *noticeStrategyEntity) DelNoticeStrategy(id int, deletedBy string) (err error) {
-	return service.noticeStrategyRepo.Delete(id, deletedBy)
+	err = service.noticeStrategyRepo.Delete(id, deletedBy)
+	if err != nil {
+		return
+	}
+	// 操作日志
+	opLogData := &model.OperationLog{
+		OpType:   "delete",
+		RsType:   "notice_strategy",
+		RsId:     id,
+		OpDetail: "",
+		OpError:  "",
+	}
+	_, err = service.opLogRepo.Create(opLogData, deletedBy)
+	return
 }
 
 func (service *noticeStrategyEntity) GetNoticeStrategyInfo(id int) (data *vo.NoticeStrategyGetInfoRes, err error) {

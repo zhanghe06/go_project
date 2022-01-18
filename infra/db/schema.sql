@@ -29,17 +29,19 @@ CREATE TABLE IF NOT EXISTS `cert`
 
 CREATE TABLE IF NOT EXISTS `operation_log`
 (
-    `id`            INT         NOT NULL AUTO_INCREMENT,
-    `op_type`       VARCHAR(20) NOT NULL DEFAULT '' COMMENT '操作类型（create:创建、update:更新、delete:删除）',
-    `rs_type`       VARCHAR(20) NOT NULL DEFAULT '' COMMENT '资源类型（cert、）',
-    `rs_id`         INT         NOT NULL DEFAULT 0 COMMENT '资源ID',
-    `deleted_state` TINYINT     NOT NULL DEFAULT 0 COMMENT '删除状态（0:未删除,1:已删除）',
-    `created_at`    TIMESTAMP   NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
-    `updated_at`    TIMESTAMP   NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间',
-    `deleted_at`    TIMESTAMP   NULL COMMENT '删除时间',
-    `created_by`    VARCHAR(64) NOT NULL DEFAULT '' COMMENT '创建人员',
-    `updated_by`    VARCHAR(64) NOT NULL DEFAULT '' COMMENT '更新人员',
-    `deleted_by`    VARCHAR(64) NOT NULL DEFAULT '' COMMENT '删除人员',
+    `id`            INT          NOT NULL AUTO_INCREMENT,
+    `op_type`       VARCHAR(20)  NOT NULL DEFAULT '' COMMENT '操作类型（create:创建、update:更新、delete:删除）',
+    `rs_type`       VARCHAR(20)  NOT NULL DEFAULT '' COMMENT '资源类型（cert、）',
+    `rs_id`         INT          NOT NULL DEFAULT 0 COMMENT '资源ID',
+    `op_detail`     VARCHAR(512) NOT NULL DEFAULT '' COMMENT '操作详情',
+    `op_error`      VARCHAR(512) NOT NULL DEFAULT '' COMMENT '操作错误',
+    `deleted_state` TINYINT      NOT NULL DEFAULT 0 COMMENT '删除状态（0:未删除,1:已删除）',
+    `created_at`    TIMESTAMP    NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+    `updated_at`    TIMESTAMP    NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间',
+    `deleted_at`    TIMESTAMP    NULL COMMENT '删除时间',
+    `created_by`    VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '创建人员',
+    `updated_by`    VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '更新人员',
+    `deleted_by`    VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '删除人员',
     PRIMARY KEY (`id`),
     KEY `idx_created_at` (`created_at`)
 ) ENGINE = InnoDB

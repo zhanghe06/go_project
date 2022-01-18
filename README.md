@@ -73,5 +73,5 @@ server
 ## 数据库
 
 ```
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `go_project` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `sap_cert_mgt` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci */;
 ```

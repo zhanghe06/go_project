@@ -5,8 +5,8 @@
 package mock
 
 import (
-	vo "go_project/domain/vo"
 	reflect "reflect"
+	vo "sap_cert_mgt/domain/vo"
 
 	gomock "github.com/golang/mock/gomock"
 )

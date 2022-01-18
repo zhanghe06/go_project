@@ -3,13 +3,13 @@ package noticeConf
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"go_project/adapter/driver"
-	"go_project/domain/entity"
-	"go_project/domain/vo"
-	"go_project/infra/logs"
-	"go_project/infra/requests"
-	"go_project/infra/responses"
 	"net/http"
+	"sap_cert_mgt/adapter/driver"
+	"sap_cert_mgt/domain/entity"
+	"sap_cert_mgt/domain/vo"
+	"sap_cert_mgt/infra/logs"
+	"sap_cert_mgt/infra/requests"
+	"sap_cert_mgt/infra/responses"
 	"sync"
 )
 

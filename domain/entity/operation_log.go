@@ -1,10 +1,10 @@
 package entity
 
 import (
-	"go_project/domain/repository"
-	"go_project/domain/vo"
-	"go_project/infra/model"
-	"go_project/infra/persistence"
+	"sap_cert_mgt/domain/repository"
+	"sap_cert_mgt/domain/vo"
+	"sap_cert_mgt/infra/model"
+	"sap_cert_mgt/infra/persistence"
 	"sync"
 )
 
@@ -12,7 +12,6 @@ import (
 type OperationLogEntityInterface interface {
 	AddOperationLog(data *vo.OperationLogCreateReq, createdBy string) (id int, err error)
 	DelOperationLog(id int, deletedBy string) (err error)
-	ModOperationLog(id int, data map[string]interface{}, updatedBy string) (err error)
 	GetOperationLogInfo(id int) (data *vo.OperationLogGetInfoRes, err error)
 	GetOperationLogList(filter map[string]interface{}, args ...interface{}) (total int64, data []*vo.OperationLogGetInfoRes, err error)
 }
@@ -40,13 +39,12 @@ func NewOperationLogEntity() OperationLogEntityInterface {
 func (service *operationLogEntity) AddOperationLog(data *vo.OperationLogCreateReq, createdBy string) (id int, err error) {
 	// 参数处理
 	logInfo := &model.OperationLog{}
-	//logInfo.Name = data.Name
-	//logInfo.Gender = *data.Gender
+	logInfo.OpType = data.OpType
+	logInfo.RsType = data.RsType
+	logInfo.RsId = data.RsId
+	logInfo.OpDetail = data.OpDetail
+	logInfo.OpError = data.OpError
 	return service.operationLogRepo.Create(logInfo, createdBy)
-}
-
-func (service *operationLogEntity) ModOperationLog(id int, data map[string]interface{}, updatedBy string) (err error) {
-	return service.operationLogRepo.Update(id, data, updatedBy)
 }
 
 func (service *operationLogEntity) DelOperationLog(id int, deletedBy string) (err error) {
@@ -58,9 +56,11 @@ func (service *operationLogEntity) GetOperationLogInfo(id int) (data *vo.Operati
 	// 响应处理
 	data = &vo.OperationLogGetInfoRes{}
 	data.Id = resInfo.Id
-	//data.Name = resInfo.Name
-	//data.Gender = resInfo.Gender
-	data.SetGenderDisplayName()
+	data.OpType = resInfo.OpType
+	data.RsType = resInfo.RsType
+	data.RsId = resInfo.RsId
+	data.OpDetail = resInfo.OpDetail
+	data.OpError = resInfo.OpError
 	return
 }
 
@@ -71,9 +71,11 @@ func (service *operationLogEntity) GetOperationLogList(filter map[string]interfa
 	for _, resInfo := range resList {
 		item := &vo.OperationLogGetInfoRes{}
 		item.Id = resInfo.Id
-		//item.Name = resInfo.Name
-		//item.Gender = resInfo.Gender
-		item.SetGenderDisplayName()
+		item.OpType = resInfo.OpType
+		item.RsType = resInfo.RsType
+		item.RsId = resInfo.RsId
+		item.OpDetail = resInfo.OpDetail
+		item.OpError = resInfo.OpError
 		data = append(data, item)
 	}
 	return

@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"go_project/adapter/driver"
-	"go_project/domain/entity"
-	"go_project/domain/vo"
-	"go_project/infra/errors"
-	"go_project/infra/logs"
-	"go_project/infra/requests"
-	"go_project/infra/responses"
 	"net/http"
+	"sap_cert_mgt/adapter/driver"
+	"sap_cert_mgt/domain/entity"
+	"sap_cert_mgt/domain/vo"
+	"sap_cert_mgt/infra/errors"
+	"sap_cert_mgt/infra/logs"
+	"sap_cert_mgt/infra/requests"
+	"sap_cert_mgt/infra/responses"
 	"sync"
 )
 
@@ -39,7 +39,6 @@ func (h *restHandler) RegisterAPI(engine *gin.Engine) {
 	engine.GET("/operation_log", h.getListHandler)
 	engine.POST("/operation_log", h.createHandler)
 	engine.GET("/operation_log/:id", h.getInfoHandler)
-	engine.PUT("/operation_log/:id", h.updateHandler)
 	engine.DELETE("/operation_log/:id", h.deleteHandler)
 }
 
@@ -52,6 +51,7 @@ func (h *restHandler) getListHandler(c *gin.Context) {
 	_, err := requests.TokenAuthorization(c)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusUnauthorized, err)
+		return
 	}
 
 	// 请求处理
@@ -152,54 +152,6 @@ func (h *restHandler) createHandler(c *gin.Context) {
 		"id":  id,
 	})
 }
-
-
-func (h *restHandler) updateHandler(c *gin.Context) {
-	// 异常捕获
-	defer responses.ApiRecover(c)
-
-	// 认证处理
-	userInfo, err := requests.TokenAuthorization(c)
-	if err != nil {
-		_ = c.AbortWithError(http.StatusUnauthorized, err)
-		return
-	}
-
-	// 请求处理
-	var uriReq requests.IDUriReq
-	if err := c.ShouldBindUri(&uriReq); err != nil {
-		_ = c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
-	var operationLogUpdateReq vo.OperationLogUpdateReq
-	if err := c.ShouldBindJSON(&operationLogUpdateReq); err != nil {
-		_ = c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
-	// 参数转换
-	var data map[string]interface{}
-	reqBytes, err := json.Marshal(operationLogUpdateReq)
-	if err != nil {
-		_ = c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-	err = json.Unmarshal(reqBytes, &data)
-	if err != nil {
-		_ = c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
-	// 逻辑处理
-	err = h.operationLogEntity.ModOperationLog(uriReq.ID, data, userInfo.ID)
-	if err != nil {
-		_ = c.AbortWithError(http.StatusNotFound, err)
-		return
-	}
-	c.Status(http.StatusNoContent)
-}
-
 
 func (h *restHandler) deleteHandler(c *gin.Context) {
 	// 异常捕获

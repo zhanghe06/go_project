@@ -1,10 +1,8 @@
 service:
-  debug: true
   lang: en_US
-  name: "go_project"
-  ver: "v1"
   host: "0.0.0.0"
-  port: "8080"
+  public_port: "30975"
+  private_port: "30976"
 mysql:
   username: "root"
   password: "123456"
@@ -26,4 +24,5 @@ etcd:
   path_key: ""
   path_ca: ""
 log:
-  file_path: "/tmp/app.log"
+  log_dir: "/var/log/sap-cert-mgt"
+  log_name: "sap-cert-mgt.log"

@@ -5,12 +5,20 @@ import (
 )
 
 var (
+	Languages = [3]string{"zh_CN", "zh_TW", "en_US"}
 	Lang = "en_US"
+
 )
 
+//func SetLanguage(lang string)  {
+//	for
+//}
+
 type ApiError struct {
-	ErrCode int `json:"err_code"`
-	ErrMsg string `json:"err_msg"`
+	ErrCode int `json:"code"`
+	ErrMsg string `json:"description"`
+	ErrSolution string `json:"solution"`
+	ErrorLink string `json:"link"`
 }
 
 func (e *ApiError) Error() string {
@@ -26,8 +34,13 @@ var _ error = &ApiError{}
 const (
 	// ErrCode 通用异常
 	ErrCode = 100000 + iota
-	ErrCodeInternalServerError
 	ErrCodeUnauthorized
+	ErrCodeInvalidRequest = 400000000
+	ErrCodeNotAuthorized = 401000000
+	ErrCodeNotPermission = 403000000
+	ErrCodeNotFound = 404000000
+	ErrCodeConflicts = 409000000
+	ErrCodeInternalServerError = 500000000
 )
 
 const (
@@ -109,3 +122,9 @@ const (
 	ErrMsgOperationLogNotFound = "OperationLogNotFound"
 	ErrMsgOperationLogDisabled = "OperationLogDisabled"
 )
+
+//var (
+//	errorI18n = map[int]map[string]string {
+//
+//	}
+//)

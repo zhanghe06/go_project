@@ -2,8 +2,8 @@ package logs
 
 import (
 	"fmt"
-	"go_project/infra/config"
-	"go_project/infra/utils"
+	"sap_cert_mgt/infra/config"
+	"sap_cert_mgt/infra/utils"
 	"log"
 	"os"
 	"path"
