@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"net/http"
 	"sap_cert_mgt/adapter/driver"
 	"sap_cert_mgt/domain/entity"
 	"sap_cert_mgt/domain/vo"
@@ -11,14 +12,13 @@ import (
 	"sap_cert_mgt/infra/logs"
 	"sap_cert_mgt/infra/requests"
 	"sap_cert_mgt/infra/responses"
-	"net/http"
 	"sync"
 )
 
 type restHandler struct {
-	certEntity entity.CertEntityInterface
+	certEntity         entity.CertEntityInterface
 	operationLogEntity entity.OperationLogEntityInterface
-	log logs.Logger
+	log                logs.Logger
 }
 
 var (
@@ -29,9 +29,9 @@ var (
 func NewRESTHandler() driver.RESTHandlerInterface {
 	restOnce.Do(func() {
 		restHand = &restHandler{
-			certEntity: entity.NewCertEntity(),
+			certEntity:         entity.NewCertEntity(),
 			operationLogEntity: entity.NewOperationLogEntity(),
-			log:  logs.NewLogger(),
+			log:                logs.NewLogger(),
 		}
 	})
 	return restHand
@@ -43,7 +43,6 @@ func (h *restHandler) RegisterAPI(engine *gin.Engine) {
 	engine.GET("/cert/:id", h.getInfoHandler)
 	engine.DELETE("/cert/:id", h.deleteHandler)
 }
-
 
 func (h *restHandler) getListHandler(c *gin.Context) {
 	// 异常捕获
@@ -83,7 +82,7 @@ func (h *restHandler) getListHandler(c *gin.Context) {
 	// 响应处理
 	c.JSON(http.StatusOK, gin.H{
 		"total_count": total,
-		"entries":  data,
+		"entries":     data,
 	})
 }
 
@@ -128,9 +127,9 @@ func (h *restHandler) createHandler(c *gin.Context) {
 	}
 
 	// 响应处理
-	c.Header("Location", c.FullPath() + fmt.Sprintf("/%d", id))
+	c.Header("Location", c.FullPath()+fmt.Sprintf("/%d", id))
 	c.JSON(http.StatusCreated, gin.H{
-		"id":  id,
+		"id": id,
 	})
 }
 

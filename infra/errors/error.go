@@ -6,8 +6,7 @@ import (
 
 var (
 	Languages = [3]string{"zh_CN", "zh_TW", "en_US"}
-	Lang = "en_US"
-
+	Lang      = "en_US"
 )
 
 //func SetLanguage(lang string)  {
@@ -15,10 +14,10 @@ var (
 //}
 
 type ApiError struct {
-	ErrCode int `json:"code"`
-	ErrMsg string `json:"description"`
+	ErrCode     int    `json:"code"`
+	ErrMsg      string `json:"description"`
 	ErrSolution string `json:"solution"`
-	ErrorLink string `json:"link"`
+	ErrorLink   string `json:"link"`
 }
 
 func (e *ApiError) Error() string {
@@ -35,11 +34,11 @@ const (
 	// ErrCode 通用异常
 	ErrCode = 100000 + iota
 	ErrCodeUnauthorized
-	ErrCodeInvalidRequest = 400000000
-	ErrCodeNotAuthorized = 401000000
-	ErrCodeNotPermission = 403000000
-	ErrCodeNotFound = 404000000
-	ErrCodeConflicts = 409000000
+	ErrCodeInvalidRequest      = 400000000
+	ErrCodeNotAuthorized       = 401000000
+	ErrCodeNotPermission       = 403000000
+	ErrCodeNotFound            = 404000000
+	ErrCodeConflicts           = 409000000
 	ErrCodeInternalServerError = 500000000
 )
 
@@ -83,42 +82,42 @@ const (
 // --------
 const (
 	// ErrMsg 通用异常
-	ErrMsg = ""
+	ErrMsg                    = ""
 	ErrMsgInternalServerError = "InternalServerError"
-	ErrMsgUnauthorized = "Unauthorized"
+	ErrMsgUnauthorized        = "Unauthorized"
 )
 
 const (
 	// ErrMsgUser 用户模块
-	ErrMsgUser = ""
+	ErrMsgUser         = ""
 	ErrMsgUserNotFound = "UserNotFound"
 	ErrMsgUserDisabled = "UserDisabled"
 )
 
 const (
 	// ErrMsgCert 证书模块
-	ErrMsgCert = ""
+	ErrMsgCert         = ""
 	ErrMsgCertNotFound = "CertNotFound"
 	ErrMsgCertDisabled = "CertDisabled"
 )
 
 const (
 	// ErrMsgNoticeConf 通知配置
-	ErrMsgNoticeConf = ""
+	ErrMsgNoticeConf         = ""
 	ErrMsgNoticeConfNotFound = "NoticeConfNotFound"
 	ErrMsgNoticeConfDisabled = "NoticeConfDisabled"
 )
 
 const (
 	// ErrMsgNoticeStrategy 通知策略
-	ErrMsgNoticeStrategy = ""
+	ErrMsgNoticeStrategy         = ""
 	ErrMsgNoticeStrategyNotFound = "NoticeStrategyNotFound"
 	ErrMsgNoticeStrategyDisabled = "NoticeStrategyDisabled"
 )
 
 const (
 	// ErrMsgOperationLog 操作日志
-	ErrMsgOperationLog = ""
+	ErrMsgOperationLog         = ""
 	ErrMsgOperationLogNotFound = "OperationLogNotFound"
 	ErrMsgOperationLogDisabled = "OperationLogDisabled"
 )

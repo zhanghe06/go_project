@@ -5,7 +5,6 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-
 func RequestIdMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 若存在，则传递，便于链路追踪

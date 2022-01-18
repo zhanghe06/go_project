@@ -17,7 +17,7 @@ import (
 
 type restHandler struct {
 	operationLogEntity entity.OperationLogEntityInterface
-	log logs.Logger
+	log                logs.Logger
 }
 
 var (
@@ -29,7 +29,7 @@ func NewRESTHandler() driver.RESTHandlerInterface {
 	restOnce.Do(func() {
 		restHand = &restHandler{
 			operationLogEntity: entity.NewOperationLogEntity(),
-			log:  logs.NewLogger(),
+			log:                logs.NewLogger(),
 		}
 	})
 	return restHand
@@ -41,7 +41,6 @@ func (h *restHandler) RegisterAPI(engine *gin.Engine) {
 	engine.GET("/operation_log/:id", h.getInfoHandler)
 	engine.DELETE("/operation_log/:id", h.deleteHandler)
 }
-
 
 func (h *restHandler) getListHandler(c *gin.Context) {
 	// 异常捕获
@@ -88,7 +87,7 @@ func (h *restHandler) getListHandler(c *gin.Context) {
 	// 响应处理
 	c.JSON(http.StatusOK, gin.H{
 		"total_count": total,
-		"entries":  data,
+		"entries":     data,
 	})
 }
 
@@ -147,9 +146,9 @@ func (h *restHandler) createHandler(c *gin.Context) {
 	}
 
 	// 响应处理
-	c.Header("Location", c.FullPath() + fmt.Sprintf("/%d", id))
+	c.Header("Location", c.FullPath()+fmt.Sprintf("/%d", id))
 	c.JSON(http.StatusCreated, gin.H{
-		"id":  id,
+		"id": id,
 	})
 }
 

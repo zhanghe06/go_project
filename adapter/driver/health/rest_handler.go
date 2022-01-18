@@ -2,8 +2,8 @@ package health
 
 import (
 	"github.com/gin-gonic/gin"
-	"sap_cert_mgt/adapter/driver"
 	"net/http"
+	"sap_cert_mgt/adapter/driver"
 	"sync"
 )
 

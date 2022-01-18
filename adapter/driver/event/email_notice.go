@@ -22,24 +22,23 @@ type EmailNoticeConfig struct {
 type emailNotice struct {
 	//EmailNoticeConfig
 	emailNoticeEntity aggregate.EmailNoticeEntityInterface
-	log logs.Logger
+	log               logs.Logger
 }
 
 var (
 	noticeOnce sync.Once
-	notice NoticeInterface
+	notice     NoticeInterface
 )
 
 func NewEmailNotice() NoticeInterface {
 	noticeOnce.Do(func() {
 		notice = &emailNotice{
 			emailNoticeEntity: aggregate.NewEmailNoticeEntity(),
-			log:              logs.NewLogger(),
+			log:               logs.NewLogger(),
 		}
 	})
 	return notice
 }
-
 
 // 实现依赖倒置（检查接口是否实现）
 var _ NoticeInterface = &emailNotice{}
@@ -79,4 +78,3 @@ func (ec *emailNotice) Send() {
 //	err := smtp.SendMail(serverAddress, auth, ec.FromEmail, sendTo, msg)
 //	return err
 //}
-

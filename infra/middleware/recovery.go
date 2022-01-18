@@ -21,7 +21,7 @@ func RecoveryMiddleware() gin.HandlerFunc {
 				default:
 					c.AbortWithStatusJSON(statusCode, gin.H{
 						"err_code": errors.ErrCode,
-						"err_msg": err.Error(),
+						"err_msg":  err.Error(),
 					})
 				}
 				return

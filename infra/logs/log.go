@@ -2,11 +2,11 @@ package logs
 
 import (
 	"fmt"
-	"sap_cert_mgt/infra/config"
-	"sap_cert_mgt/infra/utils"
 	"log"
 	"os"
 	"path"
+	"sap_cert_mgt/infra/config"
+	"sap_cert_mgt/infra/utils"
 	"sync"
 
 	"github.com/sirupsen/logrus"

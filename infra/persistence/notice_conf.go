@@ -2,11 +2,11 @@ package persistence
 
 import (
 	"encoding/json"
+	"gorm.io/gorm"
 	"sap_cert_mgt/domain/enums"
 	"sap_cert_mgt/domain/repository"
 	"sap_cert_mgt/infra/db"
 	"sap_cert_mgt/infra/model"
-	"gorm.io/gorm"
 	"sync"
 	"time"
 )
