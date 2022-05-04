@@ -122,6 +122,10 @@ func (service *noticeStrategyEntity) GetNoticeStrategyList(filter map[string]int
 		item.TriggerThreshold = resInfo.TriggerThreshold
 		item.EnabledState = resInfo.EnabledState
 		item.ToEmails = resInfo.ToEmails
+		item.CreatedAt = resInfo.CreatedAt
+		item.CreatedBy = resInfo.CreatedBy
+		item.UpdatedAt = resInfo.UpdatedAt
+		item.UpdatedBy = resInfo.UpdatedBy
 		item.SetNoticeTypeDisplayName()
 		item.SetEnabledStateDisplayName()
 		data = append(data, item)

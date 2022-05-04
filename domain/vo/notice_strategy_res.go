@@ -2,6 +2,7 @@ package vo
 
 import (
 	"sap_cert_mgt/domain/enums"
+	"time"
 )
 
 // NoticeStrategyCreateRes .
@@ -11,13 +12,17 @@ type NoticeStrategyCreateRes struct {
 
 // NoticeStrategyGetInfoRes .
 type NoticeStrategyGetInfoRes struct {
-	Id                      int    `json:"id"`                         // id
-	NoticeType              int    `json:"notice_type"`                // 通知类型（0:邮件,1:短信）
-	TriggerThreshold        int    `json:"trigger_threshold"`          // 触发阈值
-	EnabledState            int    `json:"enabled_state"`              // 启用状态（0:停用,1:启用）
-	ToEmails                string `json:"to_emails"`                  // 接收邮箱 (半角逗号分隔)
-	NoticeTypeDisplayName   string `json:"notice_type_display_name"`   // 通知类型 (显示信息)
-	EnabledStateDisplayName string `json:"enabled_state_display_name"` // 启用状态 (显示信息)
+	Id                      int       `json:"id"`                         // id
+	NoticeType              int       `json:"notice_type"`                // 通知类型（0:邮件,1:短信）
+	TriggerThreshold        int       `json:"trigger_threshold"`          // 触发阈值
+	EnabledState            int       `json:"enabled_state"`              // 启用状态（0:停用,1:启用）
+	ToEmails                string    `json:"to_emails"`                  // 接收邮箱 (半角逗号分隔)
+	CreatedAt               time.Time `json:"created_at"`                 // 创建时间
+	UpdatedAt               time.Time `json:"updated_at"`                 // 更新时间
+	CreatedBy               string    `json:"created_by"`                 // 创建人
+	UpdatedBy               string    `json:"updated_by"`                 // 更新人
+	NoticeTypeDisplayName   string    `json:"notice_type_display_name"`   // 通知类型 (显示信息)
+	EnabledStateDisplayName string    `json:"enabled_state_display_name"` // 启用状态 (显示信息)
 }
 
 func (res *NoticeStrategyGetInfoRes) SetNoticeTypeDisplayName() {

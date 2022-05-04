@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 	"sap_cert_mgt/infra/config"
 	"strings"
 	"sync"
@@ -62,7 +61,7 @@ func connect() (*gorm.DB, error) {
 
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		// 打印SQL语句
-		Logger: logger.Default.LogMode(logger.Info),
+		//Logger: logger.Default.LogMode(logger.Info),
 		// 打印慢查询
 		// Logger: slowLogger,
 	})

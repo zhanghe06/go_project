@@ -17,6 +17,7 @@ go get -u github.com/gin-gonic/gin
 go get -u github.com/go-playground/validator/v10
 go get -u github.com/golang/mock/gomock
 go install github.com/golang/mock/mockgen@v1.6.0
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.44.2
 ```
 
 ## 六边形架构

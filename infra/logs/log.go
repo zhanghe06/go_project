@@ -33,8 +33,6 @@ type Logger interface {
 var (
 	logOnce sync.Once
 	l       Logger
-	logDir  string
-	logName string
 )
 
 // NewLogger 获取日志句柄
@@ -171,8 +169,8 @@ func initLogger() {
 		if len(logout) > 0 {
 			logHandle.logger.SetOutput(os.Stdout)
 		} else {
-			logDir = conf.Log.LogDir
-			logName = conf.Log.LogName
+			logDir := conf.Log.LogDir
+			logName := conf.Log.LogName
 			if logDir == "" {
 				logDir = utils.GetProjectAbPathByCaller()
 			} else {
@@ -190,7 +188,7 @@ func initLogger() {
 				fmt.Println("open log file err", err)
 			}
 			logHandle.logger.SetOutput(logFile)
-			l = logHandle
 		}
+		l = logHandle
 	})
 }

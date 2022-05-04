@@ -12,6 +12,7 @@ import (
 	"sap_cert_mgt/infra/logs"
 	"sap_cert_mgt/infra/requests"
 	"sap_cert_mgt/infra/responses"
+	"strings"
 	"sync"
 )
 
@@ -78,8 +79,23 @@ func (h *restHandler) getListHandler(c *gin.Context) {
 		return
 	}
 
+	// 扩展参数（范围查询）
+	var filterQuery []string
+	filterArgs := make([]interface{}, 0)
+	if v, ok := filter["created_at[]"]; ok {
+		filterQuery = append(filterQuery, "created_at BETWEEN ? AND ?")
+		filterArgs = append(filterArgs, v.([]interface{})...)
+		delete(filter, "created_at[]")
+	}
+	filterQueries := strings.Join(filterQuery, " AND ")
+	args := make([]interface{}, 0)
+	if filterQueries != "" {
+		args = append(args, filterQueries)
+		args = append(args, filterArgs...)
+	}
+
 	// 逻辑处理
-	total, data, err := h.noticeStrategyEntity.GetNoticeStrategyList(filter)
+	total, data, err := h.noticeStrategyEntity.GetNoticeStrategyList(filter, args...)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return

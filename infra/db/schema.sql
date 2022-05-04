@@ -1,5 +1,10 @@
 CREATE DATABASE /*!32312 IF NOT EXISTS */ `sap_cert_mgt` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
 
+
+-- SELECT @@SESSION.sql_mode;
+-- # 去除 sql_mode中的 NO_ZERO_IN_DATE 和 NO_ZERO_DATE
+-- SET SESSION sql_mode = 'modes';
+
 USE `sap_cert_mgt`;
 
 CREATE TABLE IF NOT EXISTS `cert`
@@ -12,12 +17,12 @@ CREATE TABLE IF NOT EXISTS `cert`
     `version`             TINYINT     NOT NULL DEFAULT 0 COMMENT '证书版本（0:V1,1:V2,2:V3）',
     `issuer_name`         VARCHAR(64) NOT NULL DEFAULT '' COMMENT '颁发机构',
     `signature_algorithm` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '签名算法',
-    `not_before`          TIMESTAMP   NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '有效期开始时间',
-    `not_after`           TIMESTAMP   NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '有效期结束时间',
+    `not_before`          TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '有效期开始时间',
+    `not_after`           TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '有效期结束时间',
     `enabled_state`       TINYINT     NOT NULL DEFAULT 0 COMMENT '启用状态（0:已停用,1:已启用）',
     `deleted_state`       TINYINT     NOT NULL DEFAULT 0 COMMENT '删除状态（0:未删除,1:已删除）',
-    `created_at`          TIMESTAMP   NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
-    `updated_at`          TIMESTAMP   NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间',
+    `created_at`          TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at`          TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
     `deleted_at`          TIMESTAMP   NULL COMMENT '删除时间',
     `created_by`          VARCHAR(64) NOT NULL DEFAULT '' COMMENT '创建人员',
     `updated_by`          VARCHAR(64) NOT NULL DEFAULT '' COMMENT '更新人员',
@@ -36,8 +41,8 @@ CREATE TABLE IF NOT EXISTS `operation_log`
     `op_detail`     VARCHAR(512) NOT NULL DEFAULT '' COMMENT '操作详情',
     `op_error`      VARCHAR(512) NOT NULL DEFAULT '' COMMENT '操作错误',
     `deleted_state` TINYINT      NOT NULL DEFAULT 0 COMMENT '删除状态（0:未删除,1:已删除）',
-    `created_at`    TIMESTAMP    NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
-    `updated_at`    TIMESTAMP    NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间',
+    `created_at`    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at`    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
     `deleted_at`    TIMESTAMP    NULL COMMENT '删除时间',
     `created_by`    VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '创建人员',
     `updated_by`    VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '更新人员',
@@ -55,8 +60,8 @@ CREATE TABLE IF NOT EXISTS `notice_strategy`
     `to_emails`         VARCHAR(256) NOT NULL DEFAULT '' COMMENT '接收邮箱（半角逗号分隔）',
     `enabled_state`     TINYINT      NOT NULL DEFAULT 0 COMMENT '启用状态（0:已停用,1:已启用）',
     `deleted_state`     TINYINT      NOT NULL DEFAULT 0 COMMENT '删除状态（0:未删除,1:已删除）',
-    `created_at`        TIMESTAMP    NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
-    `updated_at`        TIMESTAMP    NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间',
+    `created_at`        TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at`        TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
     `deleted_at`        TIMESTAMP    NULL COMMENT '删除时间',
     `created_by`        VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '创建人员',
     `updated_by`        VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '更新人员',
@@ -72,8 +77,8 @@ CREATE TABLE IF NOT EXISTS `notice_conf`
     `notice_type`   TINYINT      NOT NULL DEFAULT 0 COMMENT '证书过期通知类型（0:邮件,1:短信）',
     `config_data`   VARCHAR(256) NOT NULL DEFAULT '' COMMENT '配置数据（加密存储:json序列化+对称加密+base64）',
     `deleted_state` TINYINT      NOT NULL DEFAULT 0 COMMENT '删除状态（0:未删除,1:已删除）',
-    `created_at`    TIMESTAMP    NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
-    `updated_at`    TIMESTAMP    NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间',
+    `created_at`    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at`    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
     `deleted_at`    TIMESTAMP    NULL COMMENT '删除时间',
     `created_by`    VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '创建人员',
     `updated_by`    VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '更新人员',
@@ -90,8 +95,8 @@ CREATE TABLE IF NOT EXISTS `notice_event`
     `notice_strategy_id` INT         NOT NULL DEFAULT 0 COMMENT '策略ID',
     `event_state`        TINYINT     NOT NULL DEFAULT 0 COMMENT '事件状态（0:pending准备,1:waiting等待,2:process进行,3:success成功,4:failure失败）',
     `deleted_state`      TINYINT     NOT NULL DEFAULT 0 COMMENT '删除状态（0:未删除,1:已删除）',
-    `created_at`         TIMESTAMP   NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
-    `updated_at`         TIMESTAMP   NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间',
+    `created_at`         TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at`         TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
     `deleted_at`         TIMESTAMP   NULL COMMENT '删除时间',
     `created_by`         VARCHAR(64) NOT NULL DEFAULT '' COMMENT '创建人员',
     `updated_by`         VARCHAR(64) NOT NULL DEFAULT '' COMMENT '更新人员',

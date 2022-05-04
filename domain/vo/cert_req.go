@@ -18,11 +18,14 @@ type CertCreateReq struct {
 
 // CertGetListReq .
 type CertGetListReq struct {
-	Limit    int    `binding:"omitempty" form:"limit,omitempty" json:"limit,omitempty"`
-	Offset   int    `binding:"omitempty" form:"offset,omitempty" json:"offset,omitempty"`
-	AuthId   string `binding:"omitempty" form:"auth_id,omitempty" json:"auth_id,omitempty"`     // 客户端ID
-	PVersion string `binding:"omitempty" form:"p_version,omitempty" json:"p_version,omitempty"` // 接口版本
-	ContRep  string `binding:"omitempty" form:"cont_rep,omitempty" json:"cont_rep,omitempty"`   // 内容仓库
+	Limit        int      `binding:"omitempty" form:"limit,omitempty" json:"limit,omitempty"`
+	Offset       int      `binding:"omitempty" form:"offset,omitempty" json:"offset,omitempty"`
+	AuthId       string   `binding:"omitempty" form:"auth_id,omitempty" json:"auth_id,omitempty"`             // 客户端ID
+	PVersion     string   `binding:"omitempty" form:"p_version,omitempty" json:"p_version,omitempty"`         // 接口版本
+	ContRep      string   `binding:"omitempty" form:"cont_rep,omitempty" json:"cont_rep,omitempty"`           // 内容仓库
+	EnabledState *int     `binding:"omitempty" form:"enabled_state,omitempty" json:"enabled_state,omitempty"` // 启用状态（0:已停用,1:已启用）
+	NotBefore    []string `binding:"omitempty" form:"not_before[],omitempty" json:"not_before[],omitempty"`   // 有效期开始时间
+	NotAfter     []string `binding:"omitempty" form:"not_after[],omitempty" json:"not_after[],omitempty"`     // 有效期结束时间
 }
 
 // CertUpdateReq .

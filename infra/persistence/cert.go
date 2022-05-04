@@ -1,6 +1,7 @@
 package persistence
 
 import (
+	"fmt"
 	"gorm.io/gorm"
 	"sap_cert_mgt/domain/enums"
 	"sap_cert_mgt/domain/repository"
@@ -108,13 +109,18 @@ func (repo *CertRepository) GetList(filter map[string]interface{}, args ...inter
 	}
 	condition["deleted_state"] = enums.NotDeleted
 
-	// 总记录数
 	dbQuery := repo.db.Model(&model.Cert{}).Where(condition)
 	if len(args) >= 2 {
 		dbQuery = dbQuery.Where(args[0], args[1:]...)
 	} else if len(args) >= 1 {
 		dbQuery = dbQuery.Where(args[0])
 	}
+
+	// 排序
+	order := fmt.Sprintf("%s %s", "id", "DESC")
+	dbQuery = dbQuery.Order(order)
+
+	// 总记录数
 	dbQuery.Count(&total)
 
 	// 分页查询

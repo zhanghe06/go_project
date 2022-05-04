@@ -1,6 +1,9 @@
 package requests
 
 import (
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"sap_cert_mgt/infra/errors"
 	"strings"
@@ -11,8 +14,8 @@ type IDUriReq struct {
 }
 
 type UserInfo struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID   string `json:"user_id"`
+	Name string `json:"user_name"`
 }
 
 func TokenAuthorization(c *gin.Context) (userInfo *UserInfo, err error) {
@@ -26,10 +29,29 @@ func TokenAuthorization(c *gin.Context) (userInfo *UserInfo, err error) {
 		//_ = c.AbortWithError(http.StatusUnauthorized, err)
 		return
 	}
-	// todo check token
-	userInfo = &UserInfo{
-		"1",
-		"admin",
+	var tokenObject []byte
+	tokenObject, err = base64.StdEncoding.DecodeString(token)
+	if err != nil {
+		fmt.Printf("base64 decode err, %v\n", err)
+		err = &errors.ApiError{
+			ErrCode: errors.ErrCodeNotAuthorized,
+			ErrMsg:  errors.ErrMsgUnauthorized,
+		}
+		//_ = c.AbortWithError(http.StatusUnauthorized, err)
+		return
 	}
+	if err = json.Unmarshal(tokenObject, &userInfo); err != nil {
+		fmt.Printf("Unmarshal err, %v\n", err)
+		err = &errors.ApiError{
+			ErrCode: errors.ErrCodeNotAuthorized,
+			ErrMsg:  errors.ErrMsgUnauthorized,
+		}
+		//_ = c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
+	//userInfo = &UserInfo{
+	//	"admin",
+	//	"admin",
+	//}
 	return
 }

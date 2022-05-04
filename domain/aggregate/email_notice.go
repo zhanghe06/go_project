@@ -173,7 +173,8 @@ func (service *emailNoticeEntity) SendEmail(ec *vo.NoticeConfGetEmailRes, receiv
 	data = append(data, body)
 	msg := []byte(strings.Join(data, "\r\n"))
 	sendTo := strings.Split(receivers, ",")
-	serverAddress := strings.Join([]string{ec.ServerHost, ec.ServerPort}, ":")
+	//serverAddress := strings.Join([]string{ec.ServerHost, ec.ServerPort}, ":")
+	serverAddress := fmt.Sprintf("%s:%d", ec.ServerHost, ec.ServerPort)
 	err = smtp.SendMail(serverAddress, auth, ec.FromEmail, sendTo, msg)
 	return
 }

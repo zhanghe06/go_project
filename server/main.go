@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"os"
 	"sap_cert_mgt/adapter/driver"
 	"sap_cert_mgt/adapter/driver/cert"
 	"sap_cert_mgt/adapter/driver/event"
@@ -35,10 +36,27 @@ func (s *server) Start() {
 	go func() {
 		engine := gin.New()
 		//engine.Use(gin.Recovery())
+
+		//formatter := func(p gin.LogFormatterParams) string {
+		//	return fmt.Sprintf("[logger] %s %s %s %d %s\n",
+		//		p.TimeStamp.Format("2006-01-02_15:04:05"),
+		//		p.Path,
+		//		p.Method,
+		//		p.StatusCode,
+		//		p.ClientIP,
+		//	)
+		//}
+		logConf := gin.LoggerConfig{
+			SkipPaths: []string{"/heartbeat"},
+			Output:    os.Stderr,
+			//Formatter: formatter,
+		}
 		engine.Use(
-			gin.Logger(),
+			//gin.Logger(),
+			gin.LoggerWithConfig(logConf),
 			middleware.RecoveryMiddleware(),
 			//middleware.RequestIdMiddleware(),
+			middleware.CORSMiddleware(), // 跨域中间件
 		)
 		engine.UseRawPath = true
 

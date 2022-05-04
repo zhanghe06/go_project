@@ -1,11 +1,13 @@
 package persistence
 
 import (
+	"fmt"
 	"gorm.io/gorm"
 	"sap_cert_mgt/domain/enums"
 	"sap_cert_mgt/domain/repository"
 	"sap_cert_mgt/infra/db"
 	"sap_cert_mgt/infra/model"
+	"strings"
 	"sync"
 	"time"
 )
@@ -94,10 +96,26 @@ func (repo *NoticeStrategyRepository) GetInfo(id int) (data *model.NoticeStrateg
 
 func (repo *NoticeStrategyRepository) GetList(filter map[string]interface{}, args ...interface{}) (total int64, data []*model.NoticeStrategy, err error) {
 	// 条件处理
+
+	// 排序条件
+	sorter := fmt.Sprintf("%s %s", "id", "DESC")
+	if v, ok := filter["sorter"]; ok {
+		sortOrder := strings.Split(v.(string), " ")
+		if sortOrder[1] == "ascend" {
+			sorter = fmt.Sprintf("%s %s", sortOrder[0], "ASC")
+		} else if sortOrder[1] == "descend" {
+			sorter = fmt.Sprintf("%s %s", sortOrder[0], "DESC")
+		} else {
+			sorter = v.(string)
+		}
+		delete(filter, "sorter")
+	}
+
 	limit := 10
 	offset := 0
 	condition := make(map[string]interface{})
 	for k, v := range filter {
+		// 分页条件
 		if k == "limit" {
 			limit = int(v.(float64))
 		} else if k == "offset" {
@@ -108,13 +126,17 @@ func (repo *NoticeStrategyRepository) GetList(filter map[string]interface{}, arg
 	}
 	condition["deleted_state"] = enums.NotDeleted
 
-	// 总记录数
 	dbQuery := repo.db.Model(&model.NoticeStrategy{}).Where(condition)
 	if len(args) >= 2 {
 		dbQuery = dbQuery.Where(args[0], args[1:]...)
 	} else if len(args) >= 1 {
 		dbQuery = dbQuery.Where(args[0])
 	}
+
+	// 执行排序
+	dbQuery = dbQuery.Order(sorter)
+
+	// 总记录数
 	dbQuery.Count(&total)
 
 	// 分页查询
